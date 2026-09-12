@@ -2,7 +2,6 @@
 
 
 class StudentPredictionInput(BaseModel):
-    """Input schema for student dropout risk prediction."""
 
     age: int = Field(..., ge=1, description="Student age in years")
     gender: str = Field(..., description="Student gender (e.g. 'Male', 'Female')")
@@ -34,7 +33,6 @@ class StudentPredictionInput(BaseModel):
 
 
 class PredictionResponse(BaseModel):
-    """Output schema returned by the prediction endpoint."""
 
     prediction: str = Field(
         ...,
@@ -50,6 +48,20 @@ class PredictionResponse(BaseModel):
         ...,
         description="Categorised risk level: 'Low', 'Medium', or 'High'",
     )
+    keyRiskFactors: list[str] = Field(
+        default_factory=list,
+        description=(
+            "Dynamically extracted list of student metrics that contributed to risk "
+            "(e.g. 'Low GPA (1.80)', 'Poor Attendance (55.0%)')."
+        ),
+    )
+    recommendations: list[str] = Field(
+        default_factory=list,
+        description=(
+            "Tailored, actionable intervention steps for academic advisors "
+            "based on the detected risk factors."
+        ),
+    )
     message: str = Field(..., description="Human-readable summary of the prediction")
 
     model_config = {
@@ -58,6 +70,18 @@ class PredictionResponse(BaseModel):
                 "prediction": "Dropout",
                 "probability": 0.82,
                 "riskLevel": "High",
+                "keyRiskFactors": [
+                    "Low GPA (1.80)",
+                    "Poor Attendance (55.0%)",
+                    "2 Previous Academic Failures",
+                    "High Financial Stress (Level 4/5)",
+                ],
+                "recommendations": [
+                    "Schedule urgent academic counselling session within 48 hours.",
+                    "Refer student to the financial aid office to explore bursaries or payment plans.",
+                    "Enrol student in an attendance-improvement programme and set weekly check-ins.",
+                    "Connect student with a peer-tutoring programme to address academic failures.",
+                ],
                 "message": (
                     "This student is at high risk of dropping out. "
                     "Immediate academic and financial counselling is recommended."
