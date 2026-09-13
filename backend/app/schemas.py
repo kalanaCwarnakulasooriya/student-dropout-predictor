@@ -1,4 +1,6 @@
-﻿from pydantic import BaseModel, Field
+﻿from datetime import datetime
+
+from pydantic import BaseModel, Field
 
 
 class StudentPredictionInput(BaseModel):
@@ -12,7 +14,7 @@ class StudentPredictionInput(BaseModel):
     study_hours: float = Field(..., ge=0.0, description="Average weekly study hours")
     failures: int = Field(..., ge=0, description="Number of failed courses")
     family_income: float = Field(..., ge=0.0, description="Annual family income")
-    financial_stress: int = Field(..., ge=1, le=5, description="Financial stress level (1 = Low, 5 = High)")
+    financial_stress: int = Field(..., ge=0, le=5, description="Financial stress level (1 = Low, 5 = High)")
 
     model_config = {
         "json_schema_extra": {
@@ -89,3 +91,27 @@ class PredictionResponse(BaseModel):
             }
         }
     }
+
+
+class StudentHistoryItem(BaseModel):
+
+    id: int = Field(..., description="Auto-incremented primary key of the stored evaluation")
+
+    age: int = Field(..., description="Student age in years")
+    gender: str = Field(..., description="Student gender")
+    gpa: float = Field(..., description="Cumulative GPA on a 4.0 scale")
+    semester_gpa: float = Field(..., description="Current semester GPA")
+    cgpa: float = Field(..., description="Cumulative Grade Point Average")
+    attendance: float = Field(..., description="Attendance percentage (0–100)")
+    study_hours: float = Field(..., description="Average weekly study hours")
+    failures: int = Field(..., description="Number of failed courses")
+    family_income: float = Field(..., description="Annual family income")
+    financial_stress: int = Field(..., description="Financial stress level (1–5)")
+
+    prediction: str = Field(..., description="'Dropout' or 'Graduate / Retained'")
+    probability: float = Field(..., description="Dropout probability (0–1)")
+    risk_level: str = Field(..., description="'Low', 'Medium', or 'High'")
+
+    evaluated_at: datetime = Field(..., description="UTC timestamp of the evaluation")
+
+    model_config = {"from_attributes": True}

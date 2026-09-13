@@ -2,12 +2,12 @@
 
 from app.schemas import StudentPredictionInput
 
-_W_CGPA_LOW        = 0.28   # CGPA < 2.0
-_W_GPA_LOW         = 0.22   # GPA  < 2.0
-_W_ATTENDANCE_LOW  = 0.20   # attendance < 65 %
-_W_FINANCIAL_STRESS= 0.15   # financial_stress >= 4
-_W_FAILURES        = 0.10   # failures >= 1 (scaled by failure count, capped at weight)
-_W_STUDY_HOURS_LOW = 0.05   # study_hours < 2
+_W_CGPA_LOW        = 0.28
+_W_GPA_LOW         = 0.22
+_W_ATTENDANCE_LOW  = 0.20
+_W_FINANCIAL_STRESS= 0.15
+_W_FAILURES        = 0.10
+_W_STUDY_HOURS_LOW = 0.05
 
 
 def _classify_risk(probability: float) -> str:
