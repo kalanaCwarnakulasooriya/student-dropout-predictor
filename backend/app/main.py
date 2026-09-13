@@ -1,11 +1,11 @@
-﻿from fastapi import Depends, FastAPI
+from fastapi import Depends, FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
 
 from app.database import engine, get_db
 from app.models import Base, StudentRecord
 from app.schemas import PredictionResponse, StudentHistoryItem, StudentPredictionInput
-from app.services.risk_engine import evaluate_student_risk
+from app.services.ml_service import is_ml_active, predict_student_dropout
 
 Base.metadata.create_all(bind=engine)
 
@@ -13,10 +13,10 @@ app = FastAPI(
     title="Student Dropout Risk Prediction API",
     description=(
         "FastAPI backend for predicting student dropout risk. "
-        "Day 3 — SQLite persistence via SQLAlchemy with full prediction history. "
-        "ML model integration planned for a future sprint."
+        "Day 4 — ML inference via sklearn Pipeline with rule-engine fallback. "
+        "SQLite persistence and full prediction history included."
     ),
-    version="0.3.0",
+    version="0.4.0",
 )
 
 app.add_middleware(
@@ -33,6 +33,7 @@ def health_check() -> dict:
         "status": "ok",
         "message": "Student Dropout Risk Prediction API is up and running.",
         "version": app.version,
+        "ml_active": is_ml_active(),
     }
 
 @app.post(
@@ -46,8 +47,11 @@ def predict_dropout(
     payload: StudentPredictionInput,
     db: Session = Depends(get_db),
 ) -> PredictionResponse:
-    
-    result = evaluate_student_risk(payload)
+    """
+    Run ML inference (or rule-engine fallback) against the submitted student
+    data, persist the evaluation to SQLite, and return the full prediction response.
+    """
+    result = predict_student_dropout(payload)
 
     record = StudentRecord(
         age=payload.age,
