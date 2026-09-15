@@ -1,12 +1,12 @@
 import React from 'react';
-import { 
-  BrainCircuit, 
-  Layers, 
-  Code, 
-  Users, 
-  CheckCircle2, 
-  Database, 
-  Cpu, 
+import {
+  BrainCircuit,
+  Layers,
+  Code,
+  Users,
+  CheckCircle2,
+  Database,
+  Cpu,
   GitBranch,
   FileSpreadsheet,
   Award
@@ -15,7 +15,7 @@ import {
 export const AboutPage: React.FC = () => {
   return (
     <div className="max-w-4xl mx-auto space-y-8">
-      {/* Title */}
+      {}
       <div className="space-y-2">
         <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-50 text-indigo-700 text-xs font-bold border border-indigo-200">
           <Award className="w-3.5 h-3.5" />
@@ -25,12 +25,12 @@ export const AboutPage: React.FC = () => {
           System Architecture & Model Specifications
         </h1>
         <p className="text-sm text-slate-500 leading-relaxed">
-          Comprehensive documentation of the Machine Learning pipeline, feature engineering strategies, 
+          Comprehensive documentation of the Machine Learning pipeline, feature engineering strategies,
           model comparison metrics, and full-stack integration design.
         </p>
       </div>
 
-      {/* 1. Problem Definition & Objectives */}
+      {}
       <div className="bg-white rounded-2xl p-6 sm:p-7 border border-slate-200 shadow-sm space-y-4">
         <div className="flex items-center gap-3">
           <div className="p-2 rounded-xl bg-indigo-50 text-indigo-600">
@@ -43,7 +43,7 @@ export const AboutPage: React.FC = () => {
         </div>
 
         <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
-          Early university student departure causes severe educational and institutional losses. 
+          Early university student departure causes severe educational and institutional losses.
           This system models student retention as a supervised binary classification task:
         </p>
 
@@ -59,7 +59,7 @@ export const AboutPage: React.FC = () => {
         </div>
       </div>
 
-      {/* 2. Feature Engineering Techniques (Mandatory 5 to 6+) */}
+      {}
       <div className="bg-white rounded-2xl p-6 sm:p-7 border border-slate-200 shadow-sm space-y-4">
         <div className="flex items-center gap-3">
           <div className="p-2 rounded-xl bg-indigo-50 text-indigo-600">
@@ -78,8 +78,8 @@ export const AboutPage: React.FC = () => {
               1. GPA & CGPA Binning
             </div>
             <p className="text-slate-600">
-              Low (<span className="font-mono text-indigo-600">&lt; 2.0</span>), 
-              Medium (<span className="font-mono text-indigo-600">2.0 – 3.0</span>), 
+              Low (<span className="font-mono text-indigo-600">&lt; 2.0</span>),
+              Medium (<span className="font-mono text-indigo-600">2.0 – 3.0</span>),
               High (<span className="font-mono text-indigo-600">&gt; 3.0</span>). Captures non-linear probation thresholds.
             </p>
           </div>
@@ -139,7 +139,7 @@ export const AboutPage: React.FC = () => {
         </div>
       </div>
 
-      {/* 3. Models Comparison Table */}
+      {}
       <div className="bg-white rounded-2xl p-6 sm:p-7 border border-slate-200 shadow-sm space-y-4">
         <div className="flex items-center gap-3">
           <div className="p-2 rounded-xl bg-indigo-50 text-indigo-600">
@@ -195,7 +195,7 @@ export const AboutPage: React.FC = () => {
         </div>
       </div>
 
-      {/* 4. Full-Stack Team Architecture & Division */}
+      {}
       <div className="bg-white rounded-2xl p-6 sm:p-7 border border-slate-200 shadow-sm space-y-4">
         <div className="flex items-center gap-3">
           <div className="p-2 rounded-xl bg-indigo-50 text-indigo-600">

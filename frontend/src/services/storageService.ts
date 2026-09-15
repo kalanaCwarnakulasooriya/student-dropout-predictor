@@ -2,7 +2,7 @@ import { PredictionRecord, StudentInputData, PredictionResponse } from '../types
 
 const STORAGE_KEY = 'edurisk_prediction_history';
 
-// Default initial recent predictions seed (matches user roadmap spec)
+
 const INITIAL_PREDICTIONS: PredictionRecord[] = [
   {
     id: 'rec-1',
@@ -27,6 +27,7 @@ const INITIAL_PREDICTIONS: PredictionRecord[] = [
       semester: 4,
       department: 'Computing',
       parental_education: 'Secondary',
+      failures: 2,
     },
     result: {
       dropout: 1,
@@ -69,6 +70,7 @@ const INITIAL_PREDICTIONS: PredictionRecord[] = [
       semester: 3,
       department: 'Engineering',
       parental_education: 'Degree',
+      failures: 0,
     },
     result: {
       dropout: 0,
@@ -108,6 +110,7 @@ const INITIAL_PREDICTIONS: PredictionRecord[] = [
       semester: 5,
       department: 'Business',
       parental_education: 'Diploma',
+      failures: 1,
     },
     result: {
       dropout: 1,
@@ -169,7 +172,7 @@ export function clearPredictionHistory(): void {
 
 export function getStats() {
   const records = getStoredPredictions();
-  // Baseline stats from university institutional database
+
   const baseTotal = 1250;
   const baseHigh = 180;
   const baseMed = 320;

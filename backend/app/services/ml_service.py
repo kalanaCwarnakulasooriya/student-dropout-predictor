@@ -84,10 +84,10 @@ _DEFAULTS: dict[str, Any] = {
     "Assignment_Delay_Days": 1,
     "Travel_Time_Minutes":   30.0,
     "Part_Time_Job":         "No",
-    "Scholarship":           "No", 
-    "Semester":              "Year 2", 
-    "Department":            "CS", 
-    "Parental_Education":    "Bachelor", 
+    "Scholarship":           "No",
+    "Semester":              "Year 2",
+    "Department":            "CS",
+    "Parental_Education":    "Bachelor",
 }
 
 
@@ -112,7 +112,7 @@ def _assignment_delay_level(days: int) -> str:
 
 
 def _build_feature_df(data: StudentPredictionInput) -> pd.DataFrame:
-   
+
     delay_days: int = _DEFAULTS["Assignment_Delay_Days"]
     travel_min: float = _DEFAULTS["Travel_Time_Minutes"]
 
@@ -157,7 +157,7 @@ def _build_feature_df(data: StudentPredictionInput) -> pd.DataFrame:
     return pd.DataFrame([row], columns=_FEATURE_COLUMNS)
 
 def _extract_risk_factors(data: StudentPredictionInput) -> list[str]:
-    """Mirror risk_engine's factor extraction against the same thresholds."""
+
     factors: list[str] = []
     if data.cgpa < 2.0:
         factors.append(f"Low CGPA ({data.cgpa:.2f} / 4.00)")
@@ -176,7 +176,7 @@ def _extract_risk_factors(data: StudentPredictionInput) -> list[str]:
 
 
 def _build_recommendations(data: StudentPredictionInput) -> list[str]:
-    """Mirror risk_engine's recommendation builder."""
+
     recs: list[str] = []
     if data.cgpa < 2.0 or data.gpa < 2.0:
         recs.append(
@@ -218,7 +218,7 @@ def _build_recommendations(data: StudentPredictionInput) -> list[str]:
     return recs
 
 def predict_student_dropout(data: StudentPredictionInput) -> dict:
-    
+
     if _pipeline is not None:
         try:
             df = _build_feature_df(data)

@@ -1,13 +1,13 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { useLocation, useNavigate, Link } from 'react-router-dom';
-import { 
-  ArrowLeft, 
-  Printer, 
-  PlusCircle, 
-  AlertTriangle, 
-  CheckCircle2, 
-  AlertOctagon, 
-  Sparkles, 
+import {
+  ArrowLeft,
+  Printer,
+  PlusCircle,
+  AlertTriangle,
+  CheckCircle2,
+  AlertOctagon,
+  Sparkles,
   Info,
   Calendar,
   BookOpen,
@@ -22,10 +22,10 @@ export const ResultPage: React.FC = () => {
   const location = useLocation();
   const navigate = useNavigate();
 
-  // Extract result and input from route state
+
   const state = location.state as { result?: PredictionResponse; input?: StudentInputData } | undefined;
 
-  // If accessed directly without state, use a realistic fallback sample
+
   const result: PredictionResponse = state?.result || {
     dropout: 1,
     probability: 0.82,
@@ -64,11 +64,20 @@ export const ResultPage: React.FC = () => {
     semester: 4,
     department: 'Computing',
     parental_education: 'Secondary',
+    failures: 2,
   };
 
   const percentage = Math.round(
     result.probability > 1 ? result.probability : result.probability * 100
   );
+
+
+  const displayStudentId = useMemo(() => {
+    if (input.student_id) return input.student_id;
+    const year = new Date().getFullYear();
+    const suffix = String(Math.floor((result.probability * 10000) % 9000) + 1000);
+    return `ST-${year}-${suffix}`;
+  }, [input.student_id, result.probability]);
 
   const getRiskTheme = () => {
     switch (result.risk_level) {
@@ -110,8 +119,8 @@ export const ResultPage: React.FC = () => {
 
   return (
     <div className="max-w-4xl mx-auto space-y-8 print:p-0 print:max-w-full">
-      
-      {/* Top Bar Actions */}
+
+      {}
       <div className="flex items-center justify-between gap-4 print:hidden">
         <Link
           to="/predict"
@@ -143,13 +152,13 @@ export const ResultPage: React.FC = () => {
         <div className="p-4 rounded-2xl bg-amber-50 border border-amber-200 flex items-center gap-3 text-amber-900 text-xs font-medium">
           <Sparkles className="w-4 h-4 text-amber-600 shrink-0" />
           <span>
-            <strong>Note for Presentation / Viva:</strong> Prediction generated via Client-Side ML Heuristics Engine 
+            <strong>Note for Presentation / Viva:</strong> Prediction generated via Client-Side ML Heuristics Engine
             (Backend API was offline or in development). All engineered features were successfully computed.
           </span>
         </div>
       )}
 
-      {/* Hero Prediction Result Card */}
+      {}
       <div className="bg-white rounded-3xl border border-slate-200 shadow-md overflow-hidden">
         <div className={`p-8 sm:p-10 bg-gradient-to-r ${theme.gradient} text-white relative`}>
           <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-8">
@@ -165,10 +174,10 @@ export const ResultPage: React.FC = () => {
               </p>
             </div>
 
-            {/* Circular / Radial Gauge Meter */}
+            {}
             <div className="flex flex-col items-center justify-center p-6 rounded-2xl bg-white/10 backdrop-blur-md border border-white/20 shadow-inner self-center shrink-0">
               <div className="relative w-36 h-36 flex items-center justify-center">
-                {/* SVG Gauge */}
+                {}
                 <svg className="w-full h-full transform -rotate-90" viewBox="0 0 100 100">
                   <circle
                     cx="50"
@@ -203,10 +212,10 @@ export const ResultPage: React.FC = () => {
           </div>
         </div>
 
-        {/* Contributing Factors & Actionable Recommendations */}
+        {}
         <div className="p-6 sm:p-8 grid grid-cols-1 md:grid-cols-2 gap-8 divide-y md:divide-y-0 md:divide-x divide-slate-100">
-          
-          {/* Key Contributing Factors */}
+
+          {}
           <div className="space-y-4">
             <div className="flex items-center gap-2">
               <div className="p-2 rounded-xl bg-slate-100 text-slate-800">
@@ -235,7 +244,7 @@ export const ResultPage: React.FC = () => {
             </ul>
           </div>
 
-          {/* Actionable Intervention Recommendations */}
+          {}
           <div className="space-y-4 pt-6 md:pt-0 md:pl-8">
             <div className="flex items-center gap-2">
               <div className="p-2 rounded-xl bg-indigo-50 text-indigo-700">
@@ -267,7 +276,7 @@ export const ResultPage: React.FC = () => {
         </div>
       </div>
 
-      {/* Student Profile Snapshot */}
+      {}
       <div className="bg-white rounded-2xl p-6 sm:p-7 border border-slate-200 shadow-sm space-y-4">
         <h3 className="text-sm font-bold uppercase tracking-wider text-slate-400">
           Assessed Student Profile Snapshot
@@ -276,7 +285,7 @@ export const ResultPage: React.FC = () => {
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 text-xs">
           <div className="p-3 rounded-xl bg-slate-50 border border-slate-100">
             <span className="text-slate-400 block mb-1">Student Identifier</span>
-            <span className="font-bold text-slate-800">{input.student_id || 'ST-UNREGISTERED'}</span>
+            <span className="font-bold text-slate-800">{displayStudentId}</span>
           </div>
           <div className="p-3 rounded-xl bg-slate-50 border border-slate-100">
             <span className="text-slate-400 block mb-1">Department</span>

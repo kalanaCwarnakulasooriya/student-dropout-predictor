@@ -91,4 +91,3 @@ export const Sidebar: React.FC<SidebarProps> = ({ sidebarOpen, setSidebarOpen })
   );
 };
 
-

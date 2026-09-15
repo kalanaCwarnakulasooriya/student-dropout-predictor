@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { 
-  Sparkles, 
-  AlertCircle, 
-  Loader2, 
-  BookOpen, 
-  Clock, 
-  Wallet, 
-  User, 
+import {
+  Sparkles,
+  AlertCircle,
+  Loader2,
+  BookOpen,
+  Clock,
+  Wallet,
+  User,
   RotateCcw,
   CheckCircle2,
   HelpCircle,
@@ -37,6 +37,7 @@ const INITIAL_FORM_STATE: StudentInputData = {
   semester: 3,
   department: 'Computing',
   parental_education: 'Secondary',
+  failures: 0,
 };
 
 export const PredictPage: React.FC = () => {
@@ -46,7 +47,7 @@ export const PredictPage: React.FC = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [apiError, setApiError] = useState<string | null>(null);
 
-  // Field validation logic
+
   const validateField = (name: keyof StudentInputData, value: any): string | undefined => {
     switch (name) {
       case 'age':
@@ -83,6 +84,11 @@ export const PredictPage: React.FC = () => {
         if (value === '' || isNaN(value)) return 'Income required.';
         if (value < 0) return 'Income cannot be negative.';
         return undefined;
+      case 'failures':
+        if (value === '' || isNaN(value)) return 'Number of failures required.';
+        if (value < 0) return 'Cannot be negative.';
+        if (value > 20) return 'Value seems too high (max 20).';
+        return undefined;
       default:
         return undefined;
     }
@@ -104,7 +110,7 @@ export const PredictPage: React.FC = () => {
     return Object.keys(newErrors).length === 0;
   };
 
-  // Presets for rapid demo and testing
+
   const loadPreset = (type: 'high' | 'med' | 'low') => {
     setErrors({});
     setApiError(null);
@@ -128,6 +134,7 @@ export const PredictPage: React.FC = () => {
         semester: 4,
         department: 'Computing',
         parental_education: 'Secondary',
+        failures: 2,
       });
     } else if (type === 'med') {
       setFormData({
@@ -149,6 +156,7 @@ export const PredictPage: React.FC = () => {
         semester: 3,
         department: 'Business',
         parental_education: 'Diploma',
+        failures: 1,
       });
     } else {
       setFormData({
@@ -170,6 +178,7 @@ export const PredictPage: React.FC = () => {
         semester: 2,
         department: 'Engineering',
         parental_education: 'Degree',
+        failures: 0,
       });
     }
   };
@@ -187,7 +196,7 @@ export const PredictPage: React.FC = () => {
     try {
       const result = await predictStudentDropout(formData);
       savePredictionRecord(formData, result);
-      // Navigate to results page with prediction payload
+
       navigate('/result', { state: { result, input: formData } });
     } catch (err: any) {
       setApiError('Unable to process prediction. Please verify input data and try again.');
@@ -198,7 +207,7 @@ export const PredictPage: React.FC = () => {
 
   return (
     <div className="max-w-4xl mx-auto space-y-8">
-      {/* Header & Preset Bar */}
+      {}
       <div className="space-y-4">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div>
@@ -223,7 +232,7 @@ export const PredictPage: React.FC = () => {
           </button>
         </div>
 
-        {/* Quick Demo Presets */}
+        {}
         <div className="p-4 rounded-2xl bg-indigo-50/70 border border-indigo-100 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div className="flex items-center gap-2 text-xs font-bold text-indigo-900">
             <Sparkles className="w-4 h-4 text-indigo-600" />
@@ -265,10 +274,10 @@ export const PredictPage: React.FC = () => {
         </div>
       )}
 
-      {/* Main Form */}
+      {}
       <form onSubmit={handleSubmit} className="space-y-6">
-        
-        {/* Section 1: Academic Performance */}
+
+        {}
         <div className="bg-white rounded-2xl p-6 sm:p-7 border border-slate-200 shadow-sm space-y-5">
           <div className="flex items-center gap-3 pb-3 border-b border-slate-100">
             <div className="p-2 rounded-xl bg-indigo-50 text-indigo-600">
@@ -281,7 +290,7 @@ export const PredictPage: React.FC = () => {
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-5">
-            {/* Student ID (Optional) */}
+            {}
             <div>
               <label className="block text-xs font-bold text-slate-700 mb-1.5">
                 Student ID <span className="text-slate-400 font-normal">(Optional)</span>
@@ -295,7 +304,7 @@ export const PredictPage: React.FC = () => {
               />
             </div>
 
-            {/* Department */}
+            {}
             <div>
               <label className="block text-xs font-bold text-slate-700 mb-1.5">
                 Department / Faculty <span className="text-rose-500">*</span>
@@ -314,7 +323,7 @@ export const PredictPage: React.FC = () => {
               </select>
             </div>
 
-            {/* Current Semester */}
+            {}
             <div>
               <label className="block text-xs font-bold text-slate-700 mb-1.5">
                 Current Semester (1 - 8) <span className="text-rose-500">*</span>
@@ -330,7 +339,7 @@ export const PredictPage: React.FC = () => {
               </select>
             </div>
 
-            {/* Cumulative GPA (CGPA) */}
+            {}
             <div>
               <label className="block text-xs font-bold text-slate-700 mb-1.5">
                 Overall CGPA (0.00 – 4.00) <span className="text-rose-500">*</span>
@@ -353,7 +362,7 @@ export const PredictPage: React.FC = () => {
               )}
             </div>
 
-            {/* Semester GPA */}
+            {}
             <div>
               <label className="block text-xs font-bold text-slate-700 mb-1.5">
                 Latest Semester GPA (0.00 – 4.00) <span className="text-rose-500">*</span>
@@ -376,7 +385,7 @@ export const PredictPage: React.FC = () => {
               )}
             </div>
 
-            {/* High School / Baseline GPA */}
+            {}
             <div>
               <label className="block text-xs font-bold text-slate-700 mb-1.5">
                 Admission / Baseline GPA <span className="text-rose-500">*</span>
@@ -398,10 +407,32 @@ export const PredictPage: React.FC = () => {
                 </p>
               )}
             </div>
+
+            <div>
+              <label className="block text-xs font-bold text-slate-700 mb-1.5">
+                Failed Courses <span className="text-rose-500">*</span>
+                <span className="ml-1 font-normal text-slate-400">(this semester)</span>
+              </label>
+              <input
+                type="number"
+                min="0"
+                max="20"
+                value={formData.failures}
+                onChange={(e) => handleChange('failures', Number(e.target.value))}
+                className={`w-full px-3.5 py-2 text-sm rounded-xl border ${
+                  errors.failures ? 'border-rose-400 bg-rose-50/40' : 'border-slate-200'
+                } focus:outline-none focus:ring-2 focus:ring-indigo-500`}
+              />
+              {errors.failures && (
+                <p className="mt-1 text-xs text-rose-600 font-semibold flex items-center gap-1">
+                  <AlertCircle className="w-3 h-3" /> {errors.failures}
+                </p>
+              )}
+            </div>
           </div>
         </div>
 
-        {/* Section 2: Study Habits & Engagement */}
+        {}
         <div className="bg-white rounded-2xl p-6 sm:p-7 border border-slate-200 shadow-sm space-y-5">
           <div className="flex items-center gap-3 pb-3 border-b border-slate-100">
             <div className="p-2 rounded-xl bg-indigo-50 text-indigo-600">
@@ -414,7 +445,7 @@ export const PredictPage: React.FC = () => {
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-5">
-            {/* Attendance Rate */}
+            {}
             <div>
               <div className="flex justify-between items-center mb-1.5">
                 <label className="text-xs font-bold text-slate-700">
@@ -439,7 +470,7 @@ export const PredictPage: React.FC = () => {
               )}
             </div>
 
-            {/* Study Hours / Day */}
+            {}
             <div>
               <label className="block text-xs font-bold text-slate-700 mb-1.5">
                 Study Hours / Day <span className="text-rose-500">*</span>
@@ -462,7 +493,7 @@ export const PredictPage: React.FC = () => {
               )}
             </div>
 
-            {/* Assignment Delay Days */}
+            {}
             <div>
               <label className="block text-xs font-bold text-slate-700 mb-1.5">
                 Assignment Delay (Days) <span className="text-rose-500">*</span>
@@ -485,7 +516,7 @@ export const PredictPage: React.FC = () => {
           </div>
         </div>
 
-        {/* Section 3: Socioeconomic, Personal & Mental Health */}
+        {}
         <div className="bg-white rounded-2xl p-6 sm:p-7 border border-slate-200 shadow-sm space-y-5">
           <div className="flex items-center gap-3 pb-3 border-b border-slate-100">
             <div className="p-2 rounded-xl bg-indigo-50 text-indigo-600">
@@ -498,7 +529,7 @@ export const PredictPage: React.FC = () => {
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-5">
-            {/* Age */}
+            {}
             <div>
               <label className="block text-xs font-bold text-slate-700 mb-1.5">
                 Age (Years) <span className="text-rose-500">*</span>
@@ -520,7 +551,7 @@ export const PredictPage: React.FC = () => {
               )}
             </div>
 
-            {/* Gender */}
+            {}
             <div>
               <label className="block text-xs font-bold text-slate-700 mb-1.5">
                 Gender <span className="text-rose-500">*</span>
@@ -536,7 +567,7 @@ export const PredictPage: React.FC = () => {
               </select>
             </div>
 
-            {/* Parental Education */}
+            {}
             <div>
               <label className="block text-xs font-bold text-slate-700 mb-1.5">
                 Parental Education Level <span className="text-rose-500">*</span>
@@ -554,7 +585,7 @@ export const PredictPage: React.FC = () => {
               </select>
             </div>
 
-            {/* Family Income */}
+            {}
             <div>
               <label className="block text-xs font-bold text-slate-700 mb-1.5">
                 Monthly Family Income (LKR / Currency) <span className="text-rose-500">*</span>
@@ -576,7 +607,7 @@ export const PredictPage: React.FC = () => {
               )}
             </div>
 
-            {/* Travel Time */}
+            {}
             <div>
               <label className="block text-xs font-bold text-slate-700 mb-1.5">
                 Daily Commute / Travel Time (Mins) <span className="text-rose-500">*</span>
@@ -597,7 +628,7 @@ export const PredictPage: React.FC = () => {
               )}
             </div>
 
-            {/* Stress Index */}
+            {}
             <div>
               <div className="flex justify-between items-center mb-1.5">
                 <label className="text-xs font-bold text-slate-700">
@@ -625,7 +656,7 @@ export const PredictPage: React.FC = () => {
               )}
             </div>
 
-            {/* Part Time Job */}
+            {}
             <div>
               <label className="block text-xs font-bold text-slate-700 mb-1.5">
                 Has Part-Time Employment? <span className="text-rose-500">*</span>
@@ -640,7 +671,7 @@ export const PredictPage: React.FC = () => {
               </select>
             </div>
 
-            {/* Scholarship */}
+            {}
             <div>
               <label className="block text-xs font-bold text-slate-700 mb-1.5">
                 Holds Academic Scholarship? <span className="text-rose-500">*</span>
@@ -655,7 +686,7 @@ export const PredictPage: React.FC = () => {
               </select>
             </div>
 
-            {/* Internet Access */}
+            {}
             <div>
               <label className="block text-xs font-bold text-slate-700 mb-1.5">
                 Reliable Home Internet? <span className="text-rose-500">*</span>
@@ -672,7 +703,7 @@ export const PredictPage: React.FC = () => {
           </div>
         </div>
 
-        {/* Submit Actions */}
+        {}
         <div className="pt-2 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div className="flex items-center gap-2 text-xs text-slate-500">
             <Info className="w-4 h-4 text-indigo-500 shrink-0" />

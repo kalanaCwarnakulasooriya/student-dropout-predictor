@@ -1,7 +1,7 @@
 export type Gender = 'Male' | 'Female' | 'Other';
 export type BinaryChoice = 'Yes' | 'No';
 export type ParentalEducation = 'Primary' | 'Secondary' | 'Diploma' | 'Higher' | 'Degree' | 'Postgraduate';
-export type Department = 
+export type Department =
   | 'Computing'
   | 'Engineering'
   | 'Business'
@@ -10,6 +10,7 @@ export type Department =
   | 'Medicine';
 
 export type RiskLevel = 'Low' | 'Medium' | 'High';
+
 
 export interface StudentInputData {
   student_id?: string;
@@ -30,16 +31,20 @@ export interface StudentInputData {
   semester: number;
   department: Department;
   parental_education: ParentalEducation;
+  failures: number;
 }
 
+
 export interface PredictionResponse {
-  dropout: number; // 1 for Yes, 0 for No
-  probability: number; // 0.0 to 1.0 (or percentage)
+  dropout: number;
+  probability: number;
   risk_level: RiskLevel;
   contributing_factors?: string[];
   recommendations?: string[];
   is_simulated?: boolean;
+  message?: string;
 }
+
 
 export interface PredictionRecord {
   id: string;
@@ -51,4 +56,47 @@ export interface PredictionRecord {
 
 export interface FormValidationErrors {
   [key: string]: string | undefined;
+}
+
+
+export interface BackendPredictionInput {
+  age: number;
+  gender: string;
+  gpa: number;
+  semester_gpa: number;
+  cgpa: number;
+  attendance: number;
+  study_hours: number;
+  failures: number;
+  family_income: number;
+  financial_stress: number;
+}
+
+
+export interface BackendPredictionResponse {
+  prediction: string;
+  probability: number;
+  riskLevel: string;
+  keyRiskFactors: string[];
+  recommendations: string[];
+  message: string;
+}
+
+
+export interface BackendHistoryItem {
+  id: number;
+  age: number;
+  gender: string;
+  gpa: number;
+  semester_gpa: number;
+  cgpa: number;
+  attendance: number;
+  study_hours: number;
+  failures: number;
+  family_income: number;
+  financial_stress: number;
+  prediction: string;
+  probability: number;
+  risk_level: string;
+  evaluated_at: string;
 }

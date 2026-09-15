@@ -47,10 +47,7 @@ def predict_dropout(
     payload: StudentPredictionInput,
     db: Session = Depends(get_db),
 ) -> PredictionResponse:
-    """
-    Run ML inference (or rule-engine fallback) against the submitted student
-    data, persist the evaluation to SQLite, and return the full prediction response.
-    """
+
     result = predict_student_dropout(payload)
 
     record = StudentRecord(

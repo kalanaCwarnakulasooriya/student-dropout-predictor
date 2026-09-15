@@ -1,27 +1,44 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import {
   Users, AlertTriangle, ShieldAlert, ShieldCheck,
-  Zap, Search, Filter, ArrowRight, RefreshCw, GraduationCap, Sparkles
+  Zap, Search, Filter, ArrowRight, RefreshCw, GraduationCap, Sparkles, Loader2
 } from 'lucide-react';
 import { StatCard } from '../components/ui/StatCard';
 import { RiskBadge } from '../components/ui/RiskBadge';
 import { getStats, getStoredPredictions, clearPredictionHistory } from '../services/storageService';
+import { fetchPredictionHistory } from '../services/predictionService';
 import { PredictionRecord } from '../types/student';
 
 export const Dashboard: React.FC = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const [stats, setStats] = useState(getStats());
   const [records, setRecords] = useState<PredictionRecord[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [filterRisk, setFilterRisk] = useState<string>('All');
+  const [historyLoading, setHistoryLoading] = useState(true);
+  const [historySource, setHistorySource] = useState<'backend' | 'local' | null>(null);
 
-  const refreshData = () => {
-    setStats(getStats());
-    setRecords(getStoredPredictions());
+  const refreshData = async () => {
+    setHistoryLoading(true);
+    try {
+      setStats(getStats());
+      const backendRecords = await fetchPredictionHistory();
+      if (backendRecords !== null) {
+        setRecords(backendRecords);
+        setHistorySource('backend');
+      } else {
+        setRecords(getStoredPredictions());
+        setHistorySource('local');
+      }
+    } finally {
+      setHistoryLoading(false);
+    }
   };
 
-  useEffect(() => { refreshData(); }, []);
+
+  useEffect(() => { refreshData(); }, [location.key]);
 
   const filteredRecords = records.filter((rec) => {
     const matchesSearch =
@@ -154,7 +171,19 @@ export const Dashboard: React.FC = () => {
 
         <div className="p-5 sm:p-6 border-b border-white/5 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
-            <h2 className="text-lg font-bold text-white">Recent Predictions</h2>
+            <div className="flex items-center gap-2">
+              <h2 className="text-lg font-bold text-white">Recent Predictions</h2>
+              {historySource === 'backend' && (
+                <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/15 text-emerald-400 border border-emerald-500/20">
+                  Live API
+                </span>
+              )}
+              {historySource === 'local' && (
+                <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-500/15 text-amber-400 border border-amber-500/20">
+                  Offline (Local)
+                </span>
+              )}
+            </div>
             <p className="text-xs text-slate-500 mt-0.5">Student evaluation records &amp; predicted dropout probabilities</p>
           </div>
 
@@ -194,7 +223,12 @@ export const Dashboard: React.FC = () => {
           </div>
         </div>
 
-
+        {historyLoading ? (
+          <div className="flex items-center justify-center py-16 gap-3 text-slate-500">
+            <Loader2 className="w-5 h-5 animate-spin" />
+            <span className="text-sm font-medium">Loading history from backend…</span>
+          </div>
+        ) : (
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs sm:text-sm">
             <thead className="border-b border-white/5 text-slate-500 uppercase font-bold text-[11px] tracking-widest">
@@ -281,6 +315,7 @@ export const Dashboard: React.FC = () => {
             </tbody>
           </table>
         </div>
+        )}
       </div>
     </div>
   );
