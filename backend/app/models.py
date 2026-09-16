@@ -26,14 +26,14 @@ class StudentRecord(Base):
     prediction: Mapped[str] = mapped_column(String(30), nullable=False)
     probability: Mapped[float] = mapped_column(Float, nullable=False)
     risk_level: Mapped[str] = mapped_column(String(10), nullable=False)
-    
+
     evaluated_at: Mapped[datetime] = mapped_column(
         DateTime,
         nullable=False,
         default=lambda: datetime.now(timezone.utc),
     )
 
-    def __repr__(self) -> str:  # pragma: no cover
+    def __repr__(self) -> str:
         return (
             f"<StudentRecord id={self.id} prediction={self.prediction!r} "
             f"risk_level={self.risk_level!r} evaluated_at={self.evaluated_at}>"
