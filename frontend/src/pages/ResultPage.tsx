@@ -61,9 +61,9 @@ export const ResultPage: React.FC = () => {
     gpa: 1.9,
     semester_gpa: 1.7,
     cgpa: 1.85,
-    semester: 4,
-    department: 'Computing',
-    parental_education: 'Secondary',
+    semester: 'Year 3',
+    department: 'CS',
+    parental_education: 'High School',
     failures: 2,
   };
 

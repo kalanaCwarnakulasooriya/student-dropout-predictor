@@ -177,6 +177,7 @@ export async function fetchPredictionHistory(): Promise<PredictionRecord[] | nul
       const risk = (item.risk_level as RiskLevel) || 'Low';
 
       const input: StudentInputData = {
+        student_id:            `REC-${String(item.id).padStart(4, '0')}`,
         age:                   item.age,
         gender:                item.gender as any,
         gpa:                   item.gpa,
@@ -192,9 +193,9 @@ export async function fetchPredictionHistory(): Promise<PredictionRecord[] | nul
         travel_time_minutes:   0,
         part_time_job:         'No',
         scholarship:           'No',
-        semester:              1,
-        department:            'Computing',
-        parental_education:    'Secondary',
+        semester:              'Year 1',
+        department:            'CS',
+        parental_education:    'Bachelor',
       };
 
       const result: PredictionResponse = {
