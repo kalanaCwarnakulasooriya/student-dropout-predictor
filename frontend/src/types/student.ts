@@ -1,19 +1,14 @@
-export type Gender = 'Male' | 'Female' | 'Other';
+export type Gender = 'Male' | 'Female';
 export type BinaryChoice = 'Yes' | 'No';
-export type ParentalEducation = 'Primary' | 'Secondary' | 'Diploma' | 'Higher' | 'Degree' | 'Postgraduate';
-export type Department =
-  | 'Computing'
-  | 'Engineering'
-  | 'Business'
-  | 'Science'
-  | 'Humanities'
-  | 'Medicine';
+export type ParentalEducation = 'Bachelor' | 'High School' | 'Master' | 'PhD';
+export type Department = 'Arts' | 'Business' | 'CS' | 'Engineering' | 'Science';
+export type Semester = 'Year 1' | 'Year 2' | 'Year 3' | 'Year 4';
 
 export type RiskLevel = 'Low' | 'Medium' | 'High';
 
 
 export interface StudentInputData {
-  student_id?: string;
+  student_id: string;
   age: number;
   gender: Gender;
   family_income: number;
@@ -28,7 +23,7 @@ export interface StudentInputData {
   gpa: number;
   semester_gpa: number;
   cgpa: number;
-  semester: number;
+  semester: Semester;
   department: Department;
   parental_education: ParentalEducation;
   failures: number;

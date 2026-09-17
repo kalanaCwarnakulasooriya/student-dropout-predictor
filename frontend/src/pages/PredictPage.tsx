@@ -34,9 +34,9 @@ const INITIAL_FORM_STATE: StudentInputData = {
   gpa: 3.1,
   semester_gpa: 3.0,
   cgpa: 3.05,
-  semester: 3,
-  department: 'Computing',
-  parental_education: 'Secondary',
+  semester: 'Year 2',
+  department: 'CS',
+  parental_education: 'Bachelor',
   failures: 0,
 };
 
@@ -50,6 +50,9 @@ export const PredictPage: React.FC = () => {
 
   const validateField = (name: keyof StudentInputData, value: any): string | undefined => {
     switch (name) {
+      case 'student_id':
+        if (!value || String(value).trim() === '') return 'Student ID is required.';
+        return undefined;
       case 'age':
         if (value === '' || isNaN(value)) return 'Age is required.';
         if (value < 16 || value > 80) return 'Age must be between 16 and 80.';
@@ -131,9 +134,9 @@ export const PredictPage: React.FC = () => {
         gpa: 1.9,
         semester_gpa: 1.7,
         cgpa: 1.85,
-        semester: 4,
-        department: 'Computing',
-        parental_education: 'Secondary',
+        semester: 'Year 3',
+        department: 'CS',
+        parental_education: 'High School',
         failures: 2,
       });
     } else if (type === 'med') {
@@ -153,9 +156,9 @@ export const PredictPage: React.FC = () => {
         gpa: 2.65,
         semester_gpa: 2.5,
         cgpa: 2.6,
-        semester: 3,
+        semester: 'Year 2',
         department: 'Business',
-        parental_education: 'Diploma',
+        parental_education: 'Master',
         failures: 1,
       });
     } else {
@@ -175,9 +178,9 @@ export const PredictPage: React.FC = () => {
         gpa: 3.85,
         semester_gpa: 3.9,
         cgpa: 3.88,
-        semester: 2,
+        semester: 'Year 1',
         department: 'Engineering',
-        parental_education: 'Degree',
+        parental_education: 'Bachelor',
         failures: 0,
       });
     }
@@ -293,18 +296,24 @@ export const PredictPage: React.FC = () => {
             {}
             <div>
               <label className="block text-xs font-bold text-slate-700 mb-1.5">
-                Student ID <span className="text-slate-400 font-normal">(Optional)</span>
+                Student ID <span className="text-rose-500">*</span>
               </label>
               <input
                 type="text"
                 placeholder="e.g. ST-2024-042"
-                value={formData.student_id || ''}
+                value={formData.student_id}
                 onChange={(e) => handleChange('student_id', e.target.value)}
-                className="w-full px-3.5 py-2 text-sm text-slate-900 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                className={`w-full px-3.5 py-2 text-sm text-slate-900 rounded-xl border ${
+                  errors.student_id ? 'border-rose-400 bg-rose-50/40' : 'border-slate-200'
+                } focus:outline-none focus:ring-2 focus:ring-indigo-500`}
               />
+              {errors.student_id && (
+                <p className="mt-1 text-xs text-rose-600 font-semibold flex items-center gap-1">
+                  <AlertCircle className="w-3 h-3" /> {errors.student_id}
+                </p>
+              )}
             </div>
 
-            {}
             <div>
               <label className="block text-xs font-bold text-slate-700 mb-1.5">
                 Department / Faculty <span className="text-rose-500">*</span>
@@ -314,28 +323,28 @@ export const PredictPage: React.FC = () => {
                 onChange={(e) => handleChange('department', e.target.value)}
                 className="w-full px-3.5 py-2 text-sm text-slate-900 rounded-xl border border-slate-200 bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
               >
-                <option value="Computing">Computing & IT</option>
+                <option value="Arts">Arts</option>
+                <option value="Business">Business</option>
+                <option value="CS">CS</option>
                 <option value="Engineering">Engineering</option>
-                <option value="Business">Business Management</option>
-                <option value="Science">Applied Science</option>
-                <option value="Humanities">Humanities & Social Sciences</option>
-                <option value="Medicine">Medicine & Health Sciences</option>
+                <option value="Science">Science</option>
               </select>
             </div>
 
             {}
             <div>
               <label className="block text-xs font-bold text-slate-700 mb-1.5">
-                Current Semester (1 - 8) <span className="text-rose-500">*</span>
+                Academic Year <span className="text-rose-500">*</span>
               </label>
               <select
                 value={formData.semester}
-                onChange={(e) => handleChange('semester', Number(e.target.value))}
+                onChange={(e) => handleChange('semester', e.target.value)}
                 className="w-full px-3.5 py-2 text-sm text-slate-900 rounded-xl border border-slate-200 bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
               >
-                {[1, 2, 3, 4, 5, 6, 7, 8].map((s) => (
-                  <option key={s} value={s}>Semester {s}</option>
-                ))}
+                <option value="Year 1">Year 1</option>
+                <option value="Year 2">Year 2</option>
+                <option value="Year 3">Year 3</option>
+                <option value="Year 4">Year 4</option>
               </select>
             </div>
 
@@ -563,7 +572,6 @@ export const PredictPage: React.FC = () => {
               >
                 <option value="Male">Male</option>
                 <option value="Female">Female</option>
-                <option value="Other">Other</option>
               </select>
             </div>
 
@@ -577,11 +585,10 @@ export const PredictPage: React.FC = () => {
                 onChange={(e) => handleChange('parental_education', e.target.value as any)}
                 className="w-full px-3.5 py-2 text-sm text-slate-900 rounded-xl border border-slate-200 bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
               >
-                <option value="Primary">Primary Education</option>
-                <option value="Secondary">Secondary / High School</option>
-                <option value="Diploma">Diploma / Vocational</option>
-                <option value="Degree">Undergraduate Degree</option>
-                <option value="Postgraduate">Postgraduate / Masters / PhD</option>
+                <option value="Bachelor">Bachelor</option>
+                <option value="High School">High School</option>
+                <option value="Master">Master</option>
+                <option value="PhD">PhD</option>
               </select>
             </div>
 
