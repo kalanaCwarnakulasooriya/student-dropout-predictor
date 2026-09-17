@@ -8,7 +8,7 @@ export type RiskLevel = 'Low' | 'Medium' | 'High';
 
 
 export interface StudentInputData {
-  student_id: string;
+  student_id?: string;
   age: number;
   gender: Gender;
   family_income: number;
