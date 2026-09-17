@@ -16,7 +16,7 @@ import {
 } from 'lucide-react';
 import { StudentInputData, FormValidationErrors } from '../types/student';
 import { predictStudentDropout } from '../services/predictionService';
-import { savePredictionRecord, getNextStudentId } from '../services/storageService';
+import { savePredictionRecord } from '../services/storageService';
 
 const INITIAL_FORM_STATE: StudentInputData = {
   age: 20,
@@ -190,16 +190,10 @@ export const PredictPage: React.FC = () => {
     setApiError(null);
 
     try {
-      const autoId = getNextStudentId();
-      const submissionData: StudentInputData = {
-        ...formData,
-        student_id: autoId,
-      };
+      const result = await predictStudentDropout(formData);
+      savePredictionRecord(formData, result);
 
-      const result = await predictStudentDropout(submissionData);
-      const savedRecord = savePredictionRecord(submissionData, result);
-
-      navigate('/result', { state: { result, input: savedRecord.input } });
+      navigate('/result', { state: { result, input: formData } });
     } catch (err: any) {
       setApiError('Unable to process prediction. Please verify input data and try again.');
     } finally {

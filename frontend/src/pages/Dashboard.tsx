@@ -49,8 +49,8 @@ export const Dashboard: React.FC = () => {
   });
 
   const highPercent = Math.round((stats.highRisk / stats.total) * 100) || 14;
-  const medPercent = Math.round((stats.mediumRisk / stats.total) * 100) || 26;
-  const lowPercent = 100 - highPercent - medPercent;
+  const medPercent  = Math.round((stats.mediumRisk / stats.total) * 100) || 26;
+  const lowPercent  = 100 - highPercent - medPercent;
 
   return (
     <div className="space-y-6">
@@ -229,92 +229,92 @@ export const Dashboard: React.FC = () => {
             <span className="text-sm font-medium">Loading history from backend…</span>
           </div>
         ) : (
-          <div className="overflow-x-auto">
-            <table className="w-full text-left text-xs sm:text-sm">
-              <thead className="border-b border-white/5 text-slate-500 uppercase font-bold text-[11px] tracking-widest">
+        <div className="overflow-x-auto">
+          <table className="w-full text-left text-xs sm:text-sm">
+            <thead className="border-b border-white/5 text-slate-500 uppercase font-bold text-[11px] tracking-widest">
+              <tr>
+                <th className="py-3.5 px-4 sm:px-6">Record ID</th>
+                <th className="py-3.5 px-4">Department</th>
+                <th className="py-3.5 px-4">GPA / Attend.</th>
+                <th className="py-3.5 px-4">Risk Level</th>
+                <th className="py-3.5 px-4">Probability</th>
+                <th className="py-3.5 px-4">Date</th>
+                <th className="py-3.5 px-4 text-right sm:pr-6">Action</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-white/5">
+              {filteredRecords.length === 0 ? (
                 <tr>
-                  <th className="py-3.5 px-4 sm:px-6">Record ID</th>
-                  <th className="py-3.5 px-4">Department</th>
-                  <th className="py-3.5 px-4">GPA / Attend.</th>
-                  <th className="py-3.5 px-4">Risk Level</th>
-                  <th className="py-3.5 px-4">Probability</th>
-                  <th className="py-3.5 px-4">Date</th>
-                  <th className="py-3.5 px-4 text-right sm:pr-6">Action</th>
+                  <td colSpan={7} className="py-16 text-center">
+                    <div className="flex flex-col items-center gap-3 text-slate-600">
+                      <Sparkles className="w-8 h-8" />
+                      <p className="font-semibold text-sm">No matching predictions found</p>
+                      <Link to="/predict" className="text-xs text-indigo-400 hover:underline">
+                        Make your first prediction →
+                      </Link>
+                    </div>
+                  </td>
                 </tr>
-              </thead>
-              <tbody className="divide-y divide-white/5">
-                {filteredRecords.length === 0 ? (
-                  <tr>
-                    <td colSpan={7} className="py-16 text-center">
-                      <div className="flex flex-col items-center gap-3 text-slate-600">
-                        <Sparkles className="w-8 h-8" />
-                        <p className="font-semibold text-sm">No matching predictions found</p>
-                        <Link to="/predict" className="text-xs text-indigo-400 hover:underline">
-                          Make your first prediction →
-                        </Link>
-                      </div>
-                    </td>
-                  </tr>
-                ) : (
-                  filteredRecords.map((rec) => {
-                    const prob = Math.round(
-                      rec.result.probability > 1 ? rec.result.probability : rec.result.probability * 100
-                    );
-                    const probColor =
-                      rec.result.risk_level === 'High' ? 'text-rose-400' :
-                        rec.result.risk_level === 'Medium' ? 'text-amber-400' :
-                          'text-emerald-400';
+              ) : (
+                filteredRecords.map((rec) => {
+                  const prob = Math.round(
+                    rec.result.probability > 1 ? rec.result.probability : rec.result.probability * 100
+                  );
+                  const probColor =
+                    rec.result.risk_level === 'High' ? 'text-rose-400' :
+                    rec.result.risk_level === 'Medium' ? 'text-amber-400' :
+                    'text-emerald-400';
 
-                    return (
-                      <tr
-                        key={rec.id}
-                        className="table-row-hover transition-colors cursor-pointer group"
-                        onClick={() => navigate('/result', { state: { result: rec.result, input: rec.input } })}
-                      >
-                        <td className="py-4 px-4 sm:px-6">
-                          <div className="flex items-center gap-2.5">
-                            <span className="w-8 h-8 rounded-lg bg-indigo-500/15 text-indigo-400 flex items-center justify-center font-mono text-xs font-bold">
-                              {rec.id.slice(-2)}
-                            </span>
-                            <span className="font-bold text-slate-200">{rec.id}</span>
-                          </div>
-                        </td>
-                        <td className="py-4 px-4">
-                          <span className="px-2.5 py-0.5 rounded-full bg-slate-700/60 text-slate-300 text-xs font-medium border border-white/5">
-                            {rec.input.department}
+                  return (
+                    <tr
+                      key={rec.id}
+                      className="table-row-hover transition-colors cursor-pointer group"
+                      onClick={() => navigate('/result', { state: { result: rec.result, input: rec.input } })}
+                    >
+                      <td className="py-4 px-4 sm:px-6">
+                        <div className="flex items-center gap-2.5">
+                          <span className="w-8 h-8 rounded-lg bg-indigo-500/15 text-indigo-400 flex items-center justify-center font-mono text-xs font-bold">
+                            {rec.id.slice(-2)}
                           </span>
-                        </td>
-                        <td className="py-4 px-4">
-                          <div className="font-semibold text-slate-200">GPA: {rec.input.gpa}</div>
-                          <div className="text-[11px] text-slate-500">Att: {rec.input.attendance_rate}%</div>
-                        </td>
-                        <td className="py-4 px-4">
-                          <RiskBadge level={rec.result.risk_level} size="sm" />
-                        </td>
-                        <td className="py-4 px-4">
-                          <span className={`text-lg font-black ${probColor}`}>{prob}%</span>
-                        </td>
-                        <td className="py-4 px-4 text-slate-500 text-xs">
-                          {new Date(rec.timestamp).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}
-                        </td>
-                        <td className="py-4 px-4 text-right sm:pr-6">
-                          <button
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              navigate('/result', { state: { result: rec.result, input: rec.input } });
-                            }}
-                            className="inline-flex items-center gap-1 text-xs font-bold text-indigo-400 hover:text-indigo-300 group-hover:translate-x-0.5 transition-transform"
-                          >
-                            Inspect <ArrowRight className="w-3.5 h-3.5" />
-                          </button>
-                        </td>
-                      </tr>
-                    );
-                  })
-                )}
-              </tbody>
-            </table>
-          </div>
+                          <span className="font-bold text-slate-200">{rec.id}</span>
+                        </div>
+                      </td>
+                      <td className="py-4 px-4">
+                        <span className="px-2.5 py-0.5 rounded-full bg-slate-700/60 text-slate-300 text-xs font-medium border border-white/5">
+                          {rec.input.department}
+                        </span>
+                      </td>
+                      <td className="py-4 px-4">
+                        <div className="font-semibold text-slate-200">GPA: {rec.input.gpa}</div>
+                        <div className="text-[11px] text-slate-500">Att: {rec.input.attendance_rate}%</div>
+                      </td>
+                      <td className="py-4 px-4">
+                        <RiskBadge level={rec.result.risk_level} size="sm" />
+                      </td>
+                      <td className="py-4 px-4">
+                        <span className={`text-lg font-black ${probColor}`}>{prob}%</span>
+                      </td>
+                      <td className="py-4 px-4 text-slate-500 text-xs">
+                        {new Date(rec.timestamp).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}
+                      </td>
+                      <td className="py-4 px-4 text-right sm:pr-6">
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            navigate('/result', { state: { result: rec.result, input: rec.input } });
+                          }}
+                          className="inline-flex items-center gap-1 text-xs font-bold text-indigo-400 hover:text-indigo-300 group-hover:translate-x-0.5 transition-transform"
+                        >
+                          Inspect <ArrowRight className="w-3.5 h-3.5" />
+                        </button>
+                      </td>
+                    </tr>
+                  );
+                })
+              )}
+            </tbody>
+          </table>
+        </div>
         )}
       </div>
     </div>

@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React from 'react';
 import { useLocation, useNavigate, Link } from 'react-router-dom';
 import {
   ArrowLeft,
@@ -46,7 +46,6 @@ export const ResultPage: React.FC = () => {
   };
 
   const input: StudentInputData = state?.input || {
-    student_id: 1,
     age: 21,
     gender: 'Male',
     family_income: 30000,
@@ -70,14 +69,6 @@ export const ResultPage: React.FC = () => {
   const percentage = Math.round(
     result.probability > 1 ? result.probability : result.probability * 100
   );
-
-
-  const displayStudentId = useMemo(() => {
-    if (input.student_id !== undefined && input.student_id !== null && input.student_id !== '') {
-      return String(input.student_id);
-    }
-    return '1';
-  }, [input.student_id]);
 
   const getRiskTheme = () => {
     switch (result.risk_level) {
@@ -283,10 +274,6 @@ export const ResultPage: React.FC = () => {
         </h3>
 
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 text-xs">
-          <div className="p-3 rounded-xl bg-slate-50 border border-slate-100">
-            <span className="text-slate-400 block mb-1">Student Identifier</span>
-            <span className="font-bold text-slate-800">{displayStudentId}</span>
-          </div>
           <div className="p-3 rounded-xl bg-slate-50 border border-slate-100">
             <span className="text-slate-400 block mb-1">Department</span>
             <span className="font-bold text-slate-800">{input.department} (Sem {input.semester})</span>
