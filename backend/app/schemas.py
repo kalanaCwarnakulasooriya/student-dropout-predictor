@@ -3,7 +3,6 @@ from typing import List, Optional
 from pydantic import BaseModel, Field
 
 class StudentPredictionInput(BaseModel):
-    student_id: Optional[str] = Field(None, description="Student Identifier")
     department: str = Field(default="Computing & IT", description="Department / Faculty")
     semester: str = Field(default="Year 2", description="Current Semester")
 
