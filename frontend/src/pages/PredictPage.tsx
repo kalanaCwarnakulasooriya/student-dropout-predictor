@@ -34,9 +34,9 @@ const INITIAL_FORM_STATE: StudentInputData = {
   gpa: 3.1,
   semester_gpa: 3.0,
   cgpa: 3.05,
-  semester: 3,
-  department: 'Computing',
-  parental_education: 'Secondary',
+  semester: 'Year 2',
+  department: 'CS',
+  parental_education: 'Bachelor',
   failures: 0,
 };
 
@@ -50,6 +50,9 @@ export const PredictPage: React.FC = () => {
 
   const validateField = (name: keyof StudentInputData, value: any): string | undefined => {
     switch (name) {
+      case 'student_id':
+        if (!value || String(value).trim() === '') return 'Student ID is required.';
+        return undefined;
       case 'age':
         if (value === '' || isNaN(value)) return 'Age is required.';
         if (value < 16 || value > 80) return 'Age must be between 16 and 80.';
@@ -131,9 +134,9 @@ export const PredictPage: React.FC = () => {
         gpa: 1.9,
         semester_gpa: 1.7,
         cgpa: 1.85,
-        semester: 4,
-        department: 'Computing',
-        parental_education: 'Secondary',
+        semester: 'Year 3',
+        department: 'CS',
+        parental_education: 'High School',
         failures: 2,
       });
     } else if (type === 'med') {
@@ -153,9 +156,9 @@ export const PredictPage: React.FC = () => {
         gpa: 2.65,
         semester_gpa: 2.5,
         cgpa: 2.6,
-        semester: 3,
+        semester: 'Year 2',
         department: 'Business',
-        parental_education: 'Diploma',
+        parental_education: 'Master',
         failures: 1,
       });
     } else {
@@ -175,9 +178,9 @@ export const PredictPage: React.FC = () => {
         gpa: 3.85,
         semester_gpa: 3.9,
         cgpa: 3.88,
-        semester: 2,
+        semester: 'Year 1',
         department: 'Engineering',
-        parental_education: 'Degree',
+        parental_education: 'Bachelor',
         failures: 0,
       });
     }
@@ -275,7 +278,7 @@ export const PredictPage: React.FC = () => {
       )}
 
       {}
-      <form onSubmit={handleSubmit} className="space-y-6">
+      <form onSubmit={handleSubmit} className="space-y-6 predict-section">
 
         {}
         <div className="bg-white rounded-2xl p-6 sm:p-7 border border-slate-200 shadow-sm space-y-5">
@@ -293,18 +296,24 @@ export const PredictPage: React.FC = () => {
             {}
             <div>
               <label className="block text-xs font-bold text-slate-700 mb-1.5">
-                Student ID <span className="text-slate-400 font-normal">(Optional)</span>
+                Student ID <span className="text-rose-500">*</span>
               </label>
               <input
                 type="text"
                 placeholder="e.g. ST-2024-042"
-                value={formData.student_id || ''}
+                value={formData.student_id}
                 onChange={(e) => handleChange('student_id', e.target.value)}
-                className="w-full px-3.5 py-2 text-sm rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                className={`w-full px-3.5 py-2 text-sm text-slate-900 rounded-xl border ${
+                  errors.student_id ? 'border-rose-400 bg-rose-50/40' : 'border-slate-200'
+                } focus:outline-none focus:ring-2 focus:ring-indigo-500`}
               />
+              {errors.student_id && (
+                <p className="mt-1 text-xs text-rose-600 font-semibold flex items-center gap-1">
+                  <AlertCircle className="w-3 h-3" /> {errors.student_id}
+                </p>
+              )}
             </div>
 
-            {}
             <div>
               <label className="block text-xs font-bold text-slate-700 mb-1.5">
                 Department / Faculty <span className="text-rose-500">*</span>
@@ -312,30 +321,30 @@ export const PredictPage: React.FC = () => {
               <select
                 value={formData.department}
                 onChange={(e) => handleChange('department', e.target.value)}
-                className="w-full px-3.5 py-2 text-sm rounded-xl border border-slate-200 bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                className="w-full px-3.5 py-2 text-sm text-slate-900 rounded-xl border border-slate-200 bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
               >
-                <option value="Computing">Computing & IT</option>
+                <option value="Arts">Arts</option>
+                <option value="Business">Business</option>
+                <option value="CS">CS</option>
                 <option value="Engineering">Engineering</option>
-                <option value="Business">Business Management</option>
-                <option value="Science">Applied Science</option>
-                <option value="Humanities">Humanities & Social Sciences</option>
-                <option value="Medicine">Medicine & Health Sciences</option>
+                <option value="Science">Science</option>
               </select>
             </div>
 
             {}
             <div>
               <label className="block text-xs font-bold text-slate-700 mb-1.5">
-                Current Semester (1 - 8) <span className="text-rose-500">*</span>
+                Academic Year <span className="text-rose-500">*</span>
               </label>
               <select
                 value={formData.semester}
-                onChange={(e) => handleChange('semester', Number(e.target.value))}
-                className="w-full px-3.5 py-2 text-sm rounded-xl border border-slate-200 bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                onChange={(e) => handleChange('semester', e.target.value)}
+                className="w-full px-3.5 py-2 text-sm text-slate-900 rounded-xl border border-slate-200 bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
               >
-                {[1, 2, 3, 4, 5, 6, 7, 8].map((s) => (
-                  <option key={s} value={s}>Semester {s}</option>
-                ))}
+                <option value="Year 1">Year 1</option>
+                <option value="Year 2">Year 2</option>
+                <option value="Year 3">Year 3</option>
+                <option value="Year 4">Year 4</option>
               </select>
             </div>
 
@@ -351,7 +360,7 @@ export const PredictPage: React.FC = () => {
                 max="4"
                 value={formData.cgpa}
                 onChange={(e) => handleChange('cgpa', parseFloat(e.target.value))}
-                className={`w-full px-3.5 py-2 text-sm rounded-xl border ${
+                className={`w-full px-3.5 py-2 text-sm text-slate-900 rounded-xl border ${
                   errors.cgpa ? 'border-rose-400 bg-rose-50/40' : 'border-slate-200'
                 } focus:outline-none focus:ring-2 focus:ring-indigo-500`}
               />
@@ -374,7 +383,7 @@ export const PredictPage: React.FC = () => {
                 max="4"
                 value={formData.semester_gpa}
                 onChange={(e) => handleChange('semester_gpa', parseFloat(e.target.value))}
-                className={`w-full px-3.5 py-2 text-sm rounded-xl border ${
+                className={`w-full px-3.5 py-2 text-sm text-slate-900 rounded-xl border ${
                   errors.semester_gpa ? 'border-rose-400 bg-rose-50/40' : 'border-slate-200'
                 } focus:outline-none focus:ring-2 focus:ring-indigo-500`}
               />
@@ -397,7 +406,7 @@ export const PredictPage: React.FC = () => {
                 max="4"
                 value={formData.gpa}
                 onChange={(e) => handleChange('gpa', parseFloat(e.target.value))}
-                className={`w-full px-3.5 py-2 text-sm rounded-xl border ${
+                className={`w-full px-3.5 py-2 text-sm text-slate-900 rounded-xl border ${
                   errors.gpa ? 'border-rose-400 bg-rose-50/40' : 'border-slate-200'
                 } focus:outline-none focus:ring-2 focus:ring-indigo-500`}
               />
@@ -419,7 +428,7 @@ export const PredictPage: React.FC = () => {
                 max="20"
                 value={formData.failures}
                 onChange={(e) => handleChange('failures', Number(e.target.value))}
-                className={`w-full px-3.5 py-2 text-sm rounded-xl border ${
+                className={`w-full px-3.5 py-2 text-sm text-slate-900 rounded-xl border ${
                   errors.failures ? 'border-rose-400 bg-rose-50/40' : 'border-slate-200'
                 } focus:outline-none focus:ring-2 focus:ring-indigo-500`}
               />
@@ -459,7 +468,7 @@ export const PredictPage: React.FC = () => {
                 max="100"
                 value={formData.attendance_rate}
                 onChange={(e) => handleChange('attendance_rate', Number(e.target.value))}
-                className={`w-full px-3.5 py-2 text-sm rounded-xl border ${
+                className={`w-full px-3.5 py-2 text-sm text-slate-900 rounded-xl border ${
                   errors.attendance_rate ? 'border-rose-400 bg-rose-50/40' : 'border-slate-200'
                 } focus:outline-none focus:ring-2 focus:ring-indigo-500`}
               />
@@ -482,7 +491,7 @@ export const PredictPage: React.FC = () => {
                 max="24"
                 value={formData.study_hours_per_day}
                 onChange={(e) => handleChange('study_hours_per_day', parseFloat(e.target.value))}
-                className={`w-full px-3.5 py-2 text-sm rounded-xl border ${
+                className={`w-full px-3.5 py-2 text-sm text-slate-900 rounded-xl border ${
                   errors.study_hours_per_day ? 'border-rose-400 bg-rose-50/40' : 'border-slate-200'
                 } focus:outline-none focus:ring-2 focus:ring-indigo-500`}
               />
@@ -503,7 +512,7 @@ export const PredictPage: React.FC = () => {
                 min="0"
                 value={formData.assignment_delay_days}
                 onChange={(e) => handleChange('assignment_delay_days', Number(e.target.value))}
-                className={`w-full px-3.5 py-2 text-sm rounded-xl border ${
+                className={`w-full px-3.5 py-2 text-sm text-slate-900 rounded-xl border ${
                   errors.assignment_delay_days ? 'border-rose-400 bg-rose-50/40' : 'border-slate-200'
                 } focus:outline-none focus:ring-2 focus:ring-indigo-500`}
               />
@@ -540,7 +549,7 @@ export const PredictPage: React.FC = () => {
                 max="80"
                 value={formData.age}
                 onChange={(e) => handleChange('age', Number(e.target.value))}
-                className={`w-full px-3.5 py-2 text-sm rounded-xl border ${
+                className={`w-full px-3.5 py-2 text-sm text-slate-900 rounded-xl border ${
                   errors.age ? 'border-rose-400 bg-rose-50/40' : 'border-slate-200'
                 } focus:outline-none focus:ring-2 focus:ring-indigo-500`}
               />
@@ -559,11 +568,10 @@ export const PredictPage: React.FC = () => {
               <select
                 value={formData.gender}
                 onChange={(e) => handleChange('gender', e.target.value as any)}
-                className="w-full px-3.5 py-2 text-sm rounded-xl border border-slate-200 bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                className="w-full px-3.5 py-2 text-sm text-slate-900 rounded-xl border border-slate-200 bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
               >
                 <option value="Male">Male</option>
                 <option value="Female">Female</option>
-                <option value="Other">Other</option>
               </select>
             </div>
 
@@ -575,13 +583,12 @@ export const PredictPage: React.FC = () => {
               <select
                 value={formData.parental_education}
                 onChange={(e) => handleChange('parental_education', e.target.value as any)}
-                className="w-full px-3.5 py-2 text-sm rounded-xl border border-slate-200 bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                className="w-full px-3.5 py-2 text-sm text-slate-900 rounded-xl border border-slate-200 bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
               >
-                <option value="Primary">Primary Education</option>
-                <option value="Secondary">Secondary / High School</option>
-                <option value="Diploma">Diploma / Vocational</option>
-                <option value="Degree">Undergraduate Degree</option>
-                <option value="Postgraduate">Postgraduate / Masters / PhD</option>
+                <option value="Bachelor">Bachelor</option>
+                <option value="High School">High School</option>
+                <option value="Master">Master</option>
+                <option value="PhD">PhD</option>
               </select>
             </div>
 
@@ -596,7 +603,7 @@ export const PredictPage: React.FC = () => {
                 step="5000"
                 value={formData.family_income}
                 onChange={(e) => handleChange('family_income', Number(e.target.value))}
-                className={`w-full px-3.5 py-2 text-sm rounded-xl border ${
+                className={`w-full px-3.5 py-2 text-sm text-slate-900 rounded-xl border ${
                   errors.family_income ? 'border-rose-400 bg-rose-50/40' : 'border-slate-200'
                 } focus:outline-none focus:ring-2 focus:ring-indigo-500`}
               />
@@ -617,7 +624,7 @@ export const PredictPage: React.FC = () => {
                 min="0"
                 value={formData.travel_time_minutes}
                 onChange={(e) => handleChange('travel_time_minutes', Number(e.target.value))}
-                className={`w-full px-3.5 py-2 text-sm rounded-xl border ${
+                className={`w-full px-3.5 py-2 text-sm text-slate-900 rounded-xl border ${
                   errors.travel_time_minutes ? 'border-rose-400 bg-rose-50/40' : 'border-slate-200'
                 } focus:outline-none focus:ring-2 focus:ring-indigo-500`}
               />
@@ -664,7 +671,7 @@ export const PredictPage: React.FC = () => {
               <select
                 value={formData.part_time_job}
                 onChange={(e) => handleChange('part_time_job', e.target.value as any)}
-                className="w-full px-3.5 py-2 text-sm rounded-xl border border-slate-200 bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                className="w-full px-3.5 py-2 text-sm text-slate-900 rounded-xl border border-slate-200 bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
               >
                 <option value="No">No</option>
                 <option value="Yes">Yes</option>
@@ -679,7 +686,7 @@ export const PredictPage: React.FC = () => {
               <select
                 value={formData.scholarship}
                 onChange={(e) => handleChange('scholarship', e.target.value as any)}
-                className="w-full px-3.5 py-2 text-sm rounded-xl border border-slate-200 bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                className="w-full px-3.5 py-2 text-sm text-slate-900 rounded-xl border border-slate-200 bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
               >
                 <option value="No">No</option>
                 <option value="Yes">Yes</option>
@@ -694,7 +701,7 @@ export const PredictPage: React.FC = () => {
               <select
                 value={formData.internet_access}
                 onChange={(e) => handleChange('internet_access', e.target.value as any)}
-                className="w-full px-3.5 py-2 text-sm rounded-xl border border-slate-200 bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                className="w-full px-3.5 py-2 text-sm text-slate-900 rounded-xl border border-slate-200 bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
               >
                 <option value="Yes">Yes</option>
                 <option value="No">No</option>
