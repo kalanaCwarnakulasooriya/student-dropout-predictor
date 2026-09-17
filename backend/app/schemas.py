@@ -1,4 +1,4 @@
-﻿from datetime import datetime
+from datetime import datetime
 from typing import List, Optional
 from pydantic import BaseModel, Field
 
@@ -29,12 +29,62 @@ class StudentPredictionInput(BaseModel):
 
 
 class PredictionResponse(BaseModel):
-    prediction: str
-    probability: float
-    riskLevel: str
-    keyRiskFactors: List[str] = Field(default_factory=list)
-    recommendations: List[str] = Field(default_factory=list)
-    message: str
+
+    prediction: str = Field(
+        ...,
+        description="Predicted outcome: 'Dropout' or 'Graduate / Retained'",
+    )
+    probability: float = Field(
+        ...,
+        ge=0.0,
+        le=1.0,
+        description="Dropout probability as a value between 0 and 1",
+    )
+    riskLevel: str = Field(
+        ...,
+        description="Categorised risk level: 'Low', 'Medium', or 'High'",
+    )
+    keyRiskFactors: list[str] = Field(
+        default_factory=list,
+        description=(
+            "Dynamically extracted list of student metrics that contributed to risk "
+            "(e.g. 'Low GPA (1.80)', 'Poor Attendance (55.0%)')."
+        ),
+    )
+    recommendations: list[str] = Field(
+        default_factory=list,
+        description=(
+            "Tailored, actionable intervention steps for academic advisors "
+            "based on the detected risk factors."
+        ),
+    )
+    message: str = Field(..., description="Human-readable summary of the prediction")
+
+    model_config = {
+        "json_schema_extra": {
+            "example": {
+                "prediction": "Dropout",
+                "probability": 0.82,
+                "riskLevel": "High",
+                "keyRiskFactors": [
+                    "Low GPA (1.80)",
+                    "Poor Attendance (55.0%)",
+                    "2 Previous Academic Failures",
+                    "High Financial Stress (Level 4/5)",
+                ],
+                "recommendations": [
+                    "Schedule urgent academic counselling session within 48 hours.",
+                    "Refer student to the financial aid office to explore bursaries or payment plans.",
+                    "Enrol student in an attendance-improvement programme and set weekly check-ins.",
+                    "Connect student with a peer-tutoring programme to address academic failures.",
+                ],
+                "message": (
+                    "This student is at high risk of dropping out. "
+                    "Immediate academic and financial counselling is recommended."
+                ),
+            }
+        }
+    }
 
 
 class StudentHistoryItem(BaseModel):

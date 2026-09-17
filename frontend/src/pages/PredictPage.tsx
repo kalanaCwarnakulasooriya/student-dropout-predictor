@@ -16,7 +16,7 @@ import {
 } from 'lucide-react';
 import { StudentInputData, FormValidationErrors } from '../types/student';
 import { predictStudentDropout } from '../services/predictionService';
-import { savePredictionRecord } from '../services/storageService';
+import { savePredictionRecord, getNextStudentId } from '../services/storageService';
 
 const INITIAL_FORM_STATE: StudentInputData = {
   age: 20,
@@ -115,7 +115,6 @@ export const PredictPage: React.FC = () => {
     setApiError(null);
     if (type === 'high') {
       setFormData({
-        student_id: 'ST-2024-DEMO-HIGH',
         age: 22,
         gender: 'Male',
         family_income: 28000,
@@ -137,7 +136,6 @@ export const PredictPage: React.FC = () => {
       });
     } else if (type === 'med') {
       setFormData({
-        student_id: 'ST-2024-DEMO-MED',
         age: 21,
         gender: 'Female',
         family_income: 62000,
@@ -159,7 +157,6 @@ export const PredictPage: React.FC = () => {
       });
     } else {
       setFormData({
-        student_id: 'ST-2024-DEMO-LOW',
         age: 20,
         gender: 'Female',
         family_income: 98000,
@@ -193,10 +190,16 @@ export const PredictPage: React.FC = () => {
     setApiError(null);
 
     try {
-      const result = await predictStudentDropout(formData);
-      savePredictionRecord(formData, result);
+      const autoId = getNextStudentId();
+      const submissionData: StudentInputData = {
+        ...formData,
+        student_id: autoId,
+      };
 
-      navigate('/result', { state: { result, input: formData } });
+      const result = await predictStudentDropout(submissionData);
+      const savedRecord = savePredictionRecord(submissionData, result);
+
+      navigate('/result', { state: { result, input: savedRecord.input } });
     } catch (err: any) {
       setApiError('Unable to process prediction. Please verify input data and try again.');
     } finally {

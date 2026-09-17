@@ -5,11 +5,11 @@ const STORAGE_KEY = 'edurisk_prediction_history';
 
 const INITIAL_PREDICTIONS: PredictionRecord[] = [
   {
-    id: 'rec-1',
-    studentId: 'ST-2024-001',
+    id: 1,
+    studentId: 1,
     timestamp: new Date(Date.now() - 1000 * 60 * 25).toISOString(),
     input: {
-      student_id: 'ST-2024-001',
+      student_id: 1,
       age: 21,
       gender: 'Male',
       family_income: 42000,
@@ -30,6 +30,7 @@ const INITIAL_PREDICTIONS: PredictionRecord[] = [
       failures: 2,
     },
     result: {
+      id: 1,
       dropout: 1,
       probability: 0.82,
       risk_level: 'High',
@@ -48,11 +49,11 @@ const INITIAL_PREDICTIONS: PredictionRecord[] = [
     },
   },
   {
-    id: 'rec-2',
-    studentId: 'ST-2024-002',
+    id: 2,
+    studentId: 2,
     timestamp: new Date(Date.now() - 1000 * 60 * 120).toISOString(),
     input: {
-      student_id: 'ST-2024-002',
+      student_id: 2,
       age: 20,
       gender: 'Female',
       family_income: 95000,
@@ -73,6 +74,7 @@ const INITIAL_PREDICTIONS: PredictionRecord[] = [
       failures: 0,
     },
     result: {
+      id: 2,
       dropout: 0,
       probability: 0.14,
       risk_level: 'Low',
@@ -88,11 +90,11 @@ const INITIAL_PREDICTIONS: PredictionRecord[] = [
     },
   },
   {
-    id: 'rec-3',
-    studentId: 'ST-2024-003',
+    id: 3,
+    studentId: 3,
     timestamp: new Date(Date.now() - 1000 * 60 * 240).toISOString(),
     input: {
-      student_id: 'ST-2024-003',
+      student_id: 3,
       age: 22,
       gender: 'Male',
       family_income: 60000,
@@ -113,6 +115,7 @@ const INITIAL_PREDICTIONS: PredictionRecord[] = [
       failures: 1,
     },
     result: {
+      id: 3,
       dropout: 1,
       probability: 0.56,
       risk_level: 'Medium',
@@ -143,13 +146,38 @@ export function getStoredPredictions(): PredictionRecord[] {
   }
 }
 
+export function getNextStudentId(): number {
+  const current = getStoredPredictions();
+  if (!current || current.length === 0) return 1;
+  const numericIds = current
+    .map((r) => {
+      if (typeof r.studentId === 'number') return r.studentId;
+      const parsed = parseInt(String(r.studentId).replace(/\D+/g, ''), 10);
+      return isNaN(parsed) ? 0 : parsed;
+    })
+    .filter((n) => n > 0);
+  return numericIds.length > 0 ? Math.max(...numericIds) + 1 : current.length + 1;
+}
+
 export function savePredictionRecord(input: StudentInputData, result: PredictionResponse): PredictionRecord {
   const current = getStoredPredictions();
+  const autoId: number =
+    (typeof result.id === 'number' && result.id > 0)
+      ? result.id
+      : (typeof input.student_id === 'number' && input.student_id > 0)
+        ? input.student_id
+        : getNextStudentId();
+
+  const recordInput: StudentInputData = {
+    ...input,
+    student_id: autoId,
+  };
+
   const newRecord: PredictionRecord = {
-    id: 'rec-' + Date.now(),
-    studentId: input.student_id || `ST-${new Date().getFullYear()}-${String(current.length + 1).padStart(3, '0')}`,
+    id: autoId,
+    studentId: autoId,
     timestamp: new Date().toISOString(),
-    input,
+    input: recordInput,
     result,
   };
 

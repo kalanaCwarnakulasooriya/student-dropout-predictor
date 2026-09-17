@@ -70,7 +70,10 @@ def predict_dropout(
     db.commit()
     db.refresh(record)
 
-    return PredictionResponse(**result)
+    response_data = dict(result)
+    response_data["id"] = record.id
+
+    return PredictionResponse(**response_data)
 
 
 @app.get(

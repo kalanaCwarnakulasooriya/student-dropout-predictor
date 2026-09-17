@@ -8,7 +8,7 @@ export type RiskLevel = 'Low' | 'Medium' | 'High';
 
 
 export interface StudentInputData {
-  student_id?: string;
+  student_id?: number | string;
   age: number;
   gender: Gender;
   family_income: number;
@@ -31,6 +31,7 @@ export interface StudentInputData {
 
 
 export interface PredictionResponse {
+  id?: number;
   dropout: number;
   probability: number;
   risk_level: RiskLevel;
@@ -42,8 +43,8 @@ export interface PredictionResponse {
 
 
 export interface PredictionRecord {
-  id: string;
-  studentId: string;
+  id: string | number;
+  studentId: string | number;
   timestamp: string;
   input: StudentInputData;
   result: PredictionResponse;
@@ -69,6 +70,7 @@ export interface BackendPredictionInput {
 
 
 export interface BackendPredictionResponse {
+  id?: number;
   prediction: string;
   probability: number;
   riskLevel: string;

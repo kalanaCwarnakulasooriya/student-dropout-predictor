@@ -39,6 +39,7 @@ function toBackendPayload(input: StudentInputData): BackendPredictionInput {
 function fromBackendResponse(res: BackendPredictionResponse): PredictionResponse {
   const risk = (res.riskLevel as RiskLevel) || 'Low';
   return {
+    id:                   res.id,
     dropout:              res.prediction === 'Dropout' ? 1 : 0,
     probability:          res.probability,
     risk_level:           risk,
@@ -177,7 +178,7 @@ export async function fetchPredictionHistory(): Promise<PredictionRecord[] | nul
       const risk = (item.risk_level as RiskLevel) || 'Low';
 
       const input: StudentInputData = {
-        student_id:            `REC-${String(item.id).padStart(4, '0')}`,
+        student_id:            item.id,
         age:                   item.age,
         gender:                item.gender as any,
         gpa:                   item.gpa,
@@ -199,15 +200,16 @@ export async function fetchPredictionHistory(): Promise<PredictionRecord[] | nul
       };
 
       const result: PredictionResponse = {
-        dropout:    item.prediction === 'Dropout' ? 1 : 0,
+        id:          item.id,
+        dropout:     item.prediction === 'Dropout' ? 1 : 0,
         probability: item.probability,
         risk_level:  risk,
         is_simulated: false,
       };
 
       return {
-        id:        String(item.id),
-        studentId: `REC-${String(item.id).padStart(4, '0')}`,
+        id:        item.id,
+        studentId: item.id,
         timestamp: item.evaluated_at,
         input,
         result,

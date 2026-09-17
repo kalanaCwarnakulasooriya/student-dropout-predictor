@@ -46,7 +46,7 @@ export const ResultPage: React.FC = () => {
   };
 
   const input: StudentInputData = state?.input || {
-    student_id: 'ST-SAMPLE',
+    student_id: 1,
     age: 21,
     gender: 'Male',
     family_income: 30000,
@@ -73,11 +73,11 @@ export const ResultPage: React.FC = () => {
 
 
   const displayStudentId = useMemo(() => {
-    if (input.student_id) return input.student_id;
-    const year = new Date().getFullYear();
-    const suffix = String(Math.floor((result.probability * 10000) % 9000) + 1000);
-    return `ST-${year}-${suffix}`;
-  }, [input.student_id, result.probability]);
+    if (input.student_id !== undefined && input.student_id !== null && input.student_id !== '') {
+      return String(input.student_id);
+    }
+    return '1';
+  }, [input.student_id]);
 
   const getRiskTheme = () => {
     switch (result.risk_level) {
