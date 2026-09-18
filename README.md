@@ -12,6 +12,16 @@
 
 ---
 
+## 🌐 Live Deployments
+
+| Component | Platform | Live URL | Status |
+| :--- | :--- | :--- | :--- |
+| **Frontend UI (Static Site)** | Render | [https://student-dropout-ui.onrender.com](https://student-dropout-ui.onrender.com) | [![Render Status](https://img.shields.io/badge/Status-Online-brightgreen)](https://student-dropout-ui.onrender.com) |
+| **Backend REST API (FastAPI)** | Render | [https://student-dropout-api-7exv.onrender.com](https://student-dropout-api-7exv.onrender.com) | [![Render Status](https://img.shields.io/badge/Status-Online-brightgreen)](https://student-dropout-api-7exv.onrender.com) |
+| **Interactive API Docs (Swagger)** | Render | [https://student-dropout-api-7exv.onrender.com/docs](https://student-dropout-api-7exv.onrender.com/docs) | [![Docs](https://img.shields.io/badge/Swagger-UI-85EA2D?logo=swagger)](https://student-dropout-api-7exv.onrender.com/docs) |
+
+---
+
 ## ❓ Problem Statement
 Student attrition is a critical challenge faced by educational institutions worldwide. Traditional monitoring mechanisms identify at-risk students reactively—often after significant academic failure or formal withdrawal.
 
