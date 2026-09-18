@@ -1,4 +1,4 @@
-from datetime import datetime
+﻿from datetime import datetime
 from typing import List, Optional
 from pydantic import BaseModel, Field
 
@@ -29,7 +29,7 @@ class StudentPredictionInput(BaseModel):
 
 
 class PredictionResponse(BaseModel):
-
+    id: Optional[int] = Field(default=None, description="Auto-incremented ID of the record")
     prediction: str = Field(
         ...,
         description="Predicted outcome: 'Dropout' or 'Graduate / Retained'",
@@ -63,6 +63,7 @@ class PredictionResponse(BaseModel):
     model_config = {
         "json_schema_extra": {
             "example": {
+                "id": 1,
                 "prediction": "Dropout",
                 "probability": 0.82,
                 "riskLevel": "High",
@@ -99,9 +100,22 @@ class StudentHistoryItem(BaseModel):
     failures: int
     family_income: float
     financial_stress: Optional[int] = 0
+
+    department: Optional[str] = "CS"
+    semester: Optional[str] = "Year 1"
+    assignment_delay_days: Optional[int] = 0
+    travel_time_minutes: Optional[float] = 30.0
+    stress_index: Optional[float] = 5.0
+    parental_education: Optional[str] = "Bachelor"
+    part_time_job: Optional[str] = "No"
+    scholarship: Optional[str] = "No"
+    internet_access: Optional[str] = "Yes"
+
     prediction: str
     probability: float
     risk_level: str
+    key_risk_factors: list[str] = Field(default_factory=list)
+    recommendations: list[str] = Field(default_factory=list)
     evaluated_at: datetime
 
     model_config = {"from_attributes": True}

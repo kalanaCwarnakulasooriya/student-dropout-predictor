@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React, { useMemo } from 'react';
 import { useLocation, useNavigate, Link } from 'react-router-dom';
 import {
   ArrowLeft,
@@ -17,35 +17,16 @@ import {
 } from 'lucide-react';
 import { PredictionResponse, StudentInputData } from '../types/student';
 import { RiskBadge } from '../components/ui/RiskBadge';
+import { simulateDropoutPrediction } from '../services/predictionService';
 
 export const ResultPage: React.FC = () => {
   const location = useLocation();
   const navigate = useNavigate();
 
-
   const state = location.state as { result?: PredictionResponse; input?: StudentInputData } | undefined;
 
-
-  const result: PredictionResponse = state?.result || {
-    dropout: 1,
-    probability: 0.82,
-    risk_level: 'High',
-    contributing_factors: [
-      'Critical Academic Standing (GPA: 1.90)',
-      'Severe Attendance Deficit (54%)',
-      'High Academic Stress Index (9/10)',
-      'Excessive Assignment Delays (6 days average)',
-    ],
-    recommendations: [
-      'Immediate mandatory peer tutoring and academic recovery counseling.',
-      'Implement attendance warning protocol and identify transport obstacles.',
-      'Provide structured study schedule and time management workshop.',
-      'Connect student with university mental wellness and counseling services.',
-    ],
-    is_simulated: false,
-  };
-
   const input: StudentInputData = state?.input || {
+    student_id: 'REC-0001',
     age: 21,
     gender: 'Male',
     family_income: 30000,
@@ -66,9 +47,35 @@ export const ResultPage: React.FC = () => {
     failures: 2,
   };
 
+  const baseResult: PredictionResponse = state?.result || simulateDropoutPrediction(input);
+
+  // Ensure factors and recommendations always reflect the actual student metrics
+  const fallbackSimulation = useMemo(() => simulateDropoutPrediction(input), [input]);
+
+  const effectiveFactors = (baseResult.contributing_factors && baseResult.contributing_factors.length > 0)
+    ? baseResult.contributing_factors
+    : fallbackSimulation.contributing_factors || [];
+
+  const effectiveRecommendations = (baseResult.recommendations && baseResult.recommendations.length > 0)
+    ? baseResult.recommendations
+    : fallbackSimulation.recommendations || [];
+
+  const result: PredictionResponse = {
+    ...baseResult,
+    contributing_factors: effectiveFactors,
+    recommendations: effectiveRecommendations,
+  };
+
   const percentage = Math.round(
     result.probability > 1 ? result.probability : result.probability * 100
   );
+
+  const displayStudentId = useMemo(() => {
+    if (input.student_id !== undefined && input.student_id !== null && input.student_id !== '') {
+      return String(input.student_id);
+    }
+    return '1';
+  }, [input.student_id]);
 
   const getRiskTheme = () => {
     switch (result.risk_level) {
@@ -80,28 +87,28 @@ export const ResultPage: React.FC = () => {
           strokeColor: '#f43f5e',
           alertBg: 'bg-rose-50/70 border-rose-200 text-rose-900',
           summaryIcon: <AlertOctagon className="w-8 h-8 text-rose-600" />,
-          summaryText: 'The student exhibits high indicators correlated with academic attrition. Timely institutional intervention is critically advised.',
+          summaryText: 'The student exhibits high indicators correlated with academic attrition. Timely institutional intervention is urgently required.',
         };
       case 'Medium':
         return {
-          gradient: 'from-amber-500 via-orange-400 to-yellow-500',
+          gradient: 'from-amber-600 via-amber-500 to-yellow-600',
           badgeBg: 'bg-amber-50 border-amber-200 text-amber-800',
           textColor: 'text-amber-600',
           strokeColor: '#f59e0b',
           alertBg: 'bg-amber-50/70 border-amber-200 text-amber-900',
           summaryIcon: <AlertTriangle className="w-8 h-8 text-amber-600" />,
-          summaryText: 'The student exhibits moderate risk factors. Proactive academic check-ins and attendance monitoring are suggested.',
+          summaryText: 'Moderate vulnerability detected across behavioral and academic dimensions. Recommended advisory touchpoints should be initiated.',
         };
       case 'Low':
       default:
         return {
-          gradient: 'from-emerald-600 via-teal-500 to-indigo-600',
+          gradient: 'from-emerald-600 via-emerald-500 to-teal-600',
           badgeBg: 'bg-emerald-50 border-emerald-200 text-emerald-800',
           textColor: 'text-emerald-600',
           strokeColor: '#10b981',
           alertBg: 'bg-emerald-50/70 border-emerald-200 text-emerald-900',
           summaryIcon: <CheckCircle2 className="w-8 h-8 text-emerald-600" />,
-          summaryText: 'The student exhibits solid academic standing and engagement. Risk of dropping out is minimal under current parameters.',
+          summaryText: 'Student demonstrates solid academic resilience and consistent behavioral indicators. Minimal attrition risk is present.',
         };
     }
   };
@@ -109,38 +116,37 @@ export const ResultPage: React.FC = () => {
   const theme = getRiskTheme();
 
   return (
-    <div className="max-w-4xl mx-auto space-y-8 print:p-0 print:max-w-full">
-
-      {}
-      <div className="flex items-center justify-between gap-4 print:hidden">
-        <Link
-          to="/predict"
-          className="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-600 hover:text-slate-900 px-3 py-1.5 rounded-xl border border-slate-200 hover:bg-slate-100"
+    <div className="max-w-4xl mx-auto space-y-8">
+      {/* Top action bar */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <button
+          onClick={() => navigate('/predict')}
+          className="inline-flex items-center gap-2 text-sm font-semibold text-slate-600 hover:text-slate-900 transition-colors self-start"
         >
           <ArrowLeft className="w-4 h-4" />
           <span>New Assessment</span>
-        </Link>
+        </button>
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2.5 self-end sm:self-auto">
           <button
             onClick={() => window.print()}
-            className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl border border-slate-200 bg-white text-xs font-semibold text-slate-700 hover:bg-slate-50 shadow-xs"
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-slate-200 text-xs font-semibold text-slate-700 hover:bg-slate-100 transition-colors"
           >
-            <Printer className="w-4 h-4 text-slate-500" />
-            <span>Print Report</span>
+            <Printer className="w-3.5 h-3.5" />
+            Print Report
           </button>
-
           <Link
-            to="/"
-            className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold shadow-xs"
+            to="/predict"
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-indigo-600 text-white text-xs font-semibold hover:bg-indigo-700 transition-colors shadow-sm"
           >
-            <span>Back to Dashboard</span>
+            <PlusCircle className="w-3.5 h-3.5" />
+            Evaluate Another
           </Link>
         </div>
       </div>
 
       {result.is_simulated && (
-        <div className="p-4 rounded-2xl bg-amber-50 border border-amber-200 flex items-center gap-3 text-amber-900 text-xs font-medium">
+        <div className="p-4 rounded-2xl bg-amber-50 border border-amber-200 text-amber-900 text-xs flex items-center gap-3">
           <Sparkles className="w-4 h-4 text-amber-600 shrink-0" />
           <span>
             <strong>Note for Presentation / Viva:</strong> Prediction generated via Client-Side ML Heuristics Engine
@@ -149,7 +155,7 @@ export const ResultPage: React.FC = () => {
         </div>
       )}
 
-      {}
+      {/* Primary Hero Outcome Card */}
       <div className="bg-white rounded-3xl border border-slate-200 shadow-md overflow-hidden">
         <div className={`p-8 sm:p-10 bg-gradient-to-r ${theme.gradient} text-white relative`}>
           <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-8">
@@ -165,10 +171,9 @@ export const ResultPage: React.FC = () => {
               </p>
             </div>
 
-            {}
+            {/* Radial Gauge */}
             <div className="flex flex-col items-center justify-center p-6 rounded-2xl bg-white/10 backdrop-blur-md border border-white/20 shadow-inner self-center shrink-0">
               <div className="relative w-36 h-36 flex items-center justify-center">
-                {}
                 <svg className="w-full h-full transform -rotate-90" viewBox="0 0 100 100">
                   <circle
                     cx="50"
@@ -203,10 +208,8 @@ export const ResultPage: React.FC = () => {
           </div>
         </div>
 
-        {}
+        {/* Factors & Recommendations */}
         <div className="p-6 sm:p-8 grid grid-cols-1 md:grid-cols-2 gap-8 divide-y md:divide-y-0 md:divide-x divide-slate-100">
-
-          {}
           <div className="space-y-4">
             <div className="flex items-center gap-2">
               <div className="p-2 rounded-xl bg-slate-100 text-slate-800">
@@ -235,7 +238,6 @@ export const ResultPage: React.FC = () => {
             </ul>
           </div>
 
-          {}
           <div className="space-y-4 pt-6 md:pt-0 md:pl-8">
             <div className="flex items-center gap-2">
               <div className="p-2 rounded-xl bg-indigo-50 text-indigo-700">
@@ -263,11 +265,10 @@ export const ResultPage: React.FC = () => {
               )}
             </ul>
           </div>
-
         </div>
       </div>
 
-      {}
+      {/* Student Profile Snapshot - Real Dynamic Data */}
       <div className="bg-white rounded-2xl p-6 sm:p-7 border border-slate-200 shadow-sm space-y-4">
         <h3 className="text-sm font-bold uppercase tracking-wider text-slate-400">
           Assessed Student Profile Snapshot
@@ -275,12 +276,20 @@ export const ResultPage: React.FC = () => {
 
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 text-xs">
           <div className="p-3 rounded-xl bg-slate-50 border border-slate-100">
+            <span className="text-slate-400 block mb-1">Student Identifier</span>
+            <span className="font-bold text-slate-800">{displayStudentId}</span>
+          </div>
+          <div className="p-3 rounded-xl bg-slate-50 border border-slate-100">
             <span className="text-slate-400 block mb-1">Department</span>
-            <span className="font-bold text-slate-800">{input.department} (Sem {input.semester})</span>
+            <span className="font-bold text-slate-800">{input.department} ({input.semester})</span>
           </div>
           <div className="p-3 rounded-xl bg-slate-50 border border-slate-100">
             <span className="text-slate-400 block mb-1">Cumulative GPA</span>
             <span className="font-bold text-slate-800">{input.cgpa} (Sem: {input.semester_gpa})</span>
+          </div>
+          <div className="p-3 rounded-xl bg-slate-50 border border-slate-100">
+            <span className="text-slate-400 block mb-1">Baseline GPA</span>
+            <span className="font-bold text-slate-800">{input.gpa}</span>
           </div>
           <div className="p-3 rounded-xl bg-slate-50 border border-slate-100">
             <span className="text-slate-400 block mb-1">Attendance Rate</span>
@@ -288,7 +297,7 @@ export const ResultPage: React.FC = () => {
           </div>
           <div className="p-3 rounded-xl bg-slate-50 border border-slate-100">
             <span className="text-slate-400 block mb-1">Daily Study Time</span>
-            <span className="font-bold text-slate-800">{input.study_hours_per_day} hours/day</span>
+            <span className="font-bold text-slate-800">{input.study_hours_per_day} hrs/day</span>
           </div>
           <div className="p-3 rounded-xl bg-slate-50 border border-slate-100">
             <span className="text-slate-400 block mb-1">Stress Index</span>
@@ -299,8 +308,36 @@ export const ResultPage: React.FC = () => {
             <span className="font-bold text-slate-800">{input.assignment_delay_days} days</span>
           </div>
           <div className="p-3 rounded-xl bg-slate-50 border border-slate-100">
+            <span className="text-slate-400 block mb-1">Failed Courses</span>
+            <span className="font-bold text-slate-800">{input.failures}</span>
+          </div>
+          <div className="p-3 rounded-xl bg-slate-50 border border-slate-100">
+            <span className="text-slate-400 block mb-1">Family Income</span>
+            <span className="font-bold text-slate-800">LKR {input.family_income.toLocaleString()}</span>
+          </div>
+          <div className="p-3 rounded-xl bg-slate-50 border border-slate-100">
             <span className="text-slate-400 block mb-1">Scholarship / Aid</span>
             <span className="font-bold text-slate-800">{input.scholarship}</span>
+          </div>
+          <div className="p-3 rounded-xl bg-slate-50 border border-slate-100">
+            <span className="text-slate-400 block mb-1">Part-Time Job</span>
+            <span className="font-bold text-slate-800">{input.part_time_job}</span>
+          </div>
+          <div className="p-3 rounded-xl bg-slate-50 border border-slate-100">
+            <span className="text-slate-400 block mb-1">Commute Time</span>
+            <span className="font-bold text-slate-800">{input.travel_time_minutes} mins</span>
+          </div>
+          <div className="p-3 rounded-xl bg-slate-50 border border-slate-100">
+            <span className="text-slate-400 block mb-1">Parental Education</span>
+            <span className="font-bold text-slate-800">{input.parental_education}</span>
+          </div>
+          <div className="p-3 rounded-xl bg-slate-50 border border-slate-100">
+            <span className="text-slate-400 block mb-1">Home Internet</span>
+            <span className="font-bold text-slate-800">{input.internet_access}</span>
+          </div>
+          <div className="p-3 rounded-xl bg-slate-50 border border-slate-100">
+            <span className="text-slate-400 block mb-1">Demographics</span>
+            <span className="font-bold text-slate-800">{input.gender}, {input.age} yrs</span>
           </div>
         </div>
       </div>

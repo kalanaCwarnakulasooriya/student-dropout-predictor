@@ -269,7 +269,7 @@ export const Dashboard: React.FC = () => {
                     <tr
                       key={rec.id}
                       className="table-row-hover transition-colors cursor-pointer group"
-                      onClick={() => navigate('/result', { state: { result: rec.result, input: rec.input } })}
+                      onClick={() => navigate('/result', { state: { result: rec.result, input: { ...rec.input, student_id: rec.id } } })}
                     >
                       <td className="py-4 px-4 sm:px-6">
                         <div className="flex items-center gap-2.5">
@@ -301,7 +301,7 @@ export const Dashboard: React.FC = () => {
                         <button
                           onClick={(e) => {
                             e.stopPropagation();
-                            navigate('/result', { state: { result: rec.result, input: rec.input } });
+                            navigate('/result', { state: { result: rec.result, input: { ...rec.input, student_id: rec.id } } });
                           }}
                           className="inline-flex items-center gap-1 text-xs font-bold text-indigo-400 hover:text-indigo-300 group-hover:translate-x-0.5 transition-transform"
                         >

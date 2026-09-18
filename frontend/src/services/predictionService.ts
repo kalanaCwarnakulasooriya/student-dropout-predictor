@@ -1,4 +1,4 @@
-import axios from 'axios';
+﻿import axios from 'axios';
 import {
   StudentInputData,
   PredictionResponse,
@@ -22,16 +22,25 @@ const apiClient = axios.create({
 
 function toBackendPayload(input: StudentInputData): BackendPredictionInput {
   return {
-    age:               input.age,
-    gender:            input.gender,
-    gpa:               input.gpa,
-    semester_gpa:      input.semester_gpa,
-    cgpa:              input.cgpa,
-    attendance:        input.attendance_rate,
-    study_hours:       Math.round(input.study_hours_per_day * 7 * 10) / 10,
-    failures:          input.failures ?? 0,
-    family_income:     input.family_income,
-    financial_stress:  Math.min(5, Math.max(1, Math.round(input.stress_index / 2))),
+    age: input.age,
+    gender: input.gender,
+    gpa: input.gpa,
+    semester_gpa: input.semester_gpa,
+    cgpa: input.cgpa,
+    attendance: input.attendance_rate,
+    study_hours: Math.round(input.study_hours_per_day * 7 * 10) / 10,
+    failures: input.failures ?? 0,
+    family_income: input.family_income,
+    financial_stress: Math.min(5, Math.max(1, Math.round(input.stress_index / 2))),
+    department: input.department,
+    semester: input.semester,
+    assignment_delay_days: input.assignment_delay_days,
+    travel_time_minutes: input.travel_time_minutes,
+    stress_index: input.stress_index,
+    parental_education: input.parental_education,
+    part_time_job: input.part_time_job,
+    scholarship: input.scholarship,
+    internet_access: input.internet_access,
   };
 }
 
@@ -39,13 +48,13 @@ function toBackendPayload(input: StudentInputData): BackendPredictionInput {
 function fromBackendResponse(res: BackendPredictionResponse): PredictionResponse {
   const risk = (res.riskLevel as RiskLevel) || 'Low';
   return {
-    dropout:              res.prediction === 'Dropout' ? 1 : 0,
-    probability:          res.probability,
-    risk_level:           risk,
+    dropout: res.prediction === 'Dropout' ? 1 : 0,
+    probability: res.probability,
+    risk_level: risk,
     contributing_factors: res.keyRiskFactors ?? [],
-    recommendations:      res.recommendations ?? [],
-    is_simulated:         false,
-    message:              res.message,
+    recommendations: res.recommendations ?? [],
+    is_simulated: false,
+    message: res.message,
   };
 }
 
@@ -141,12 +150,12 @@ export function simulateDropoutPrediction(input: StudentInputData): PredictionRe
   }
 
   return {
-    dropout:              normalizedProbability >= 0.5 ? 1 : 0,
-    probability:          Math.round(normalizedProbability * 100) / 100,
-    risk_level:           riskLevel,
+    dropout: normalizedProbability >= 0.5 ? 1 : 0,
+    probability: Math.round(normalizedProbability * 100) / 100,
+    risk_level: riskLevel,
     contributing_factors: factors,
-    recommendations:      recommendations,
-    is_simulated:         true,
+    recommendations: recommendations,
+    is_simulated: true,
   };
 }
 
@@ -177,35 +186,46 @@ export async function fetchPredictionHistory(): Promise<PredictionRecord[] | nul
       const risk = (item.risk_level as RiskLevel) || 'Low';
 
       const input: StudentInputData = {
-        age:                   item.age,
-        gender:                item.gender as any,
-        gpa:                   item.gpa,
-        semester_gpa:          item.semester_gpa,
-        cgpa:                  item.cgpa,
-        attendance_rate:       item.attendance,
-        study_hours_per_day:   Math.round((item.study_hours / 7) * 10) / 10,
-        failures:              item.failures,
-        family_income:         item.family_income,
-        stress_index:          Math.min(10, Math.max(1, item.financial_stress * 2)),
-        internet_access:       'Yes',
-        assignment_delay_days: 0,
-        travel_time_minutes:   0,
-        part_time_job:         'No',
-        scholarship:           'No',
-        semester:              'Year 1',
-        department:            'CS',
-        parental_education:    'Bachelor',
+        student_id: item.id,
+        age: item.age,
+        gender: (item.gender as any) || 'Male',
+        gpa: item.gpa,
+        semester_gpa: item.semester_gpa,
+        cgpa: item.cgpa,
+        attendance_rate: item.attendance,
+        study_hours_per_day: Math.round((item.study_hours / 7) * 10) / 10,
+        failures: item.failures,
+        family_income: item.family_income,
+        stress_index: item.stress_index ?? Math.min(10, Math.max(1, (item.financial_stress || 0) * 2)),
+        internet_access: (item.internet_access as any) || 'Yes',
+        assignment_delay_days: item.assignment_delay_days ?? 0,
+        travel_time_minutes: item.travel_time_minutes ?? 30,
+        part_time_job: (item.part_time_job as any) || 'No',
+        scholarship: (item.scholarship as any) || 'No',
+        semester: (item.semester as any) || 'Year 1',
+        department: (item.department as any) || 'CS',
+        parental_education: (item.parental_education as any) || 'Bachelor',
       };
 
+      let factors = item.key_risk_factors;
+      let recs = item.recommendations;
+      if (!factors || factors.length === 0 || !recs || recs.length === 0) {
+        const simulated = simulateDropoutPrediction(input);
+        if (!factors || factors.length === 0) factors = simulated.contributing_factors;
+        if (!recs || recs.length === 0) recs = simulated.recommendations;
+      }
+
       const result: PredictionResponse = {
-        dropout:    item.prediction === 'Dropout' ? 1 : 0,
+        dropout: item.prediction === 'Dropout' ? 1 : 0,
         probability: item.probability,
-        risk_level:  risk,
+        risk_level: risk,
+        contributing_factors: factors,
+        recommendations: recs,
         is_simulated: false,
       };
 
       return {
-        id:        `REC-${String(item.id).padStart(4, '0')}`,
+        id: `REC-${String(item.id).padStart(4, '0')}`,
         timestamp: item.evaluated_at,
         input,
         result,
