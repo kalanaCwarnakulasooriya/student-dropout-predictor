@@ -1,19 +1,13 @@
-export type Gender = 'Male' | 'Female' | 'Other';
+﻿export type Gender = 'Male' | 'Female';
 export type BinaryChoice = 'Yes' | 'No';
-export type ParentalEducation = 'Primary' | 'Secondary' | 'Diploma' | 'Higher' | 'Degree' | 'Postgraduate';
-export type Department =
-  | 'Computing'
-  | 'Engineering'
-  | 'Business'
-  | 'Science'
-  | 'Humanities'
-  | 'Medicine';
+export type ParentalEducation = 'Bachelor' | 'High School' | 'Master' | 'PhD';
+export type Department = 'Arts' | 'Business' | 'CS' | 'Engineering' | 'Science';
+export type Semester = 'Year 1' | 'Year 2' | 'Year 3' | 'Year 4';
 
 export type RiskLevel = 'Low' | 'Medium' | 'High';
 
 
 export interface StudentInputData {
-  student_id?: string;
   age: number;
   gender: Gender;
   family_income: number;
@@ -28,10 +22,11 @@ export interface StudentInputData {
   gpa: number;
   semester_gpa: number;
   cgpa: number;
-  semester: number;
+  semester: Semester;
   department: Department;
   parental_education: ParentalEducation;
   failures: number;
+  student_id?: number | string;
 }
 
 
@@ -48,7 +43,6 @@ export interface PredictionResponse {
 
 export interface PredictionRecord {
   id: string;
-  studentId: string;
   timestamp: string;
   input: StudentInputData;
   result: PredictionResponse;
@@ -70,6 +64,15 @@ export interface BackendPredictionInput {
   failures: number;
   family_income: number;
   financial_stress: number;
+  department?: string;
+  semester?: string;
+  assignment_delay_days?: number;
+  travel_time_minutes?: number;
+  stress_index?: number;
+  parental_education?: string;
+  part_time_job?: string;
+  scholarship?: string;
+  internet_access?: string;
 }
 
 
@@ -99,4 +102,15 @@ export interface BackendHistoryItem {
   probability: number;
   risk_level: string;
   evaluated_at: string;
+  department?: string;
+  semester?: string;
+  assignment_delay_days?: number;
+  travel_time_minutes?: number;
+  stress_index?: number;
+  parental_education?: string;
+  part_time_job?: string;
+  scholarship?: string;
+  internet_access?: string;
+  key_risk_factors?: string[];
+  recommendations?: string[];
 }

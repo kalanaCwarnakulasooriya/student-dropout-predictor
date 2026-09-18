@@ -162,11 +162,15 @@ export const AboutPage: React.FC = () => {
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100 text-slate-700">
-              <tr>
-                <td className="py-2.5 px-3 font-bold text-slate-900">Logistic Regression</td>
-                <td className="py-2.5 px-3">Baseline Model</td>
-                <td className="py-2.5 px-3">Linear interpretability and fast coefficient analysis</td>
-                <td className="py-2.5 px-3 text-right text-slate-500">Benchmarked</td>
+              <tr className="bg-indigo-50/50">
+                <td className="py-2.5 px-3 font-bold text-indigo-900">Logistic Regression</td>
+                <td className="py-2.5 px-3 font-semibold text-indigo-700">Production Champion</td>
+                <td className="py-2.5 px-3">High interpretability, fast inference, and strong generalisation on tabular data</td>
+                <td className="py-2.5 px-3 text-right">
+                  <span className="px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 font-bold text-[10px]">
+                    Deployed (Active)
+                  </span>
+                </td>
               </tr>
               <tr>
                 <td className="py-2.5 px-3 font-bold text-slate-900">Decision Tree</td>
@@ -180,15 +184,11 @@ export const AboutPage: React.FC = () => {
                 <td className="py-2.5 px-3">Robust against overfitting, feature importance ranking</td>
                 <td className="py-2.5 px-3 text-right text-slate-500">Benchmarked</td>
               </tr>
-              <tr className="bg-indigo-50/50">
-                <td className="py-2.5 px-3 font-bold text-indigo-900">XGBoost / Gradient Boost</td>
-                <td className="py-2.5 px-3 font-semibold text-indigo-700">Production Champion</td>
-                <td className="py-2.5 px-3">Highest ROC-AUC score and superior handling of interactions</td>
-                <td className="py-2.5 px-3 text-right">
-                  <span className="px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 font-bold text-[10px]">
-                    Deployed (Active)
-                  </span>
-                </td>
+              <tr>
+                <td className="py-2.5 px-3 font-bold text-slate-900">XGBoost / Gradient Boost</td>
+                <td className="py-2.5 px-3">Ensemble Boosting</td>
+                <td className="py-2.5 px-3">Highest ROC-AUC score and superior handling of feature interactions</td>
+                <td className="py-2.5 px-3 text-right text-slate-500">Benchmarked</td>
               </tr>
             </tbody>
           </table>

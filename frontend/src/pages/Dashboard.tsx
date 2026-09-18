@@ -42,7 +42,7 @@ export const Dashboard: React.FC = () => {
 
   const filteredRecords = records.filter((rec) => {
     const matchesSearch =
-      rec.studentId.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      rec.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
       rec.input.department.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesRisk = filterRisk === 'All' || rec.result.risk_level === filterRisk;
     return matchesSearch && matchesRisk;
@@ -233,7 +233,7 @@ export const Dashboard: React.FC = () => {
           <table className="w-full text-left text-xs sm:text-sm">
             <thead className="border-b border-white/5 text-slate-500 uppercase font-bold text-[11px] tracking-widest">
               <tr>
-                <th className="py-3.5 px-4 sm:px-6">Student ID</th>
+                <th className="py-3.5 px-4 sm:px-6">Record ID</th>
                 <th className="py-3.5 px-4">Department</th>
                 <th className="py-3.5 px-4">GPA / Attend.</th>
                 <th className="py-3.5 px-4">Risk Level</th>
@@ -269,14 +269,14 @@ export const Dashboard: React.FC = () => {
                     <tr
                       key={rec.id}
                       className="table-row-hover transition-colors cursor-pointer group"
-                      onClick={() => navigate('/result', { state: { result: rec.result, input: rec.input } })}
+                      onClick={() => navigate('/result', { state: { result: rec.result, input: { ...rec.input, student_id: rec.id } } })}
                     >
                       <td className="py-4 px-4 sm:px-6">
                         <div className="flex items-center gap-2.5">
                           <span className="w-8 h-8 rounded-lg bg-indigo-500/15 text-indigo-400 flex items-center justify-center font-mono text-xs font-bold">
-                            {rec.studentId.slice(-2)}
+                            {rec.id.slice(-2)}
                           </span>
-                          <span className="font-bold text-slate-200">{rec.studentId}</span>
+                          <span className="font-bold text-slate-200">{rec.id}</span>
                         </div>
                       </td>
                       <td className="py-4 px-4">
@@ -301,7 +301,7 @@ export const Dashboard: React.FC = () => {
                         <button
                           onClick={(e) => {
                             e.stopPropagation();
-                            navigate('/result', { state: { result: rec.result, input: rec.input } });
+                            navigate('/result', { state: { result: rec.result, input: { ...rec.input, student_id: rec.id } } });
                           }}
                           className="inline-flex items-center gap-1 text-xs font-bold text-indigo-400 hover:text-indigo-300 group-hover:translate-x-0.5 transition-transform"
                         >

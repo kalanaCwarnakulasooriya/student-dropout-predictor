@@ -72,7 +72,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ sidebarOpen, setSidebarOpen })
               Binary Classification for early student dropout intervention with 5+ engineered features.
             </p>
             <div className="mt-3 flex flex-wrap gap-1">
-              {['XGBoost', 'sklearn', 'FastAPI'].map(tag => (
+              {['LogReg', 'sklearn', 'FastAPI'].map(tag => (
                 <span key={tag} className="chip">{tag}</span>
               ))}
             </div>

@@ -5,11 +5,9 @@ const STORAGE_KEY = 'edurisk_prediction_history';
 
 const INITIAL_PREDICTIONS: PredictionRecord[] = [
   {
-    id: 'rec-1',
-    studentId: 'ST-2024-001',
+    id: 'REC-0001',
     timestamp: new Date(Date.now() - 1000 * 60 * 25).toISOString(),
     input: {
-      student_id: 'ST-2024-001',
       age: 21,
       gender: 'Male',
       family_income: 42000,
@@ -24,9 +22,9 @@ const INITIAL_PREDICTIONS: PredictionRecord[] = [
       gpa: 2.1,
       semester_gpa: 1.9,
       cgpa: 2.0,
-      semester: 4,
-      department: 'Computing',
-      parental_education: 'Secondary',
+      semester: 'Year 3',
+      department: 'CS',
+      parental_education: 'High School',
       failures: 2,
     },
     result: {
@@ -48,11 +46,9 @@ const INITIAL_PREDICTIONS: PredictionRecord[] = [
     },
   },
   {
-    id: 'rec-2',
-    studentId: 'ST-2024-002',
+    id: 'REC-0002',
     timestamp: new Date(Date.now() - 1000 * 60 * 120).toISOString(),
     input: {
-      student_id: 'ST-2024-002',
       age: 20,
       gender: 'Female',
       family_income: 95000,
@@ -67,9 +63,9 @@ const INITIAL_PREDICTIONS: PredictionRecord[] = [
       gpa: 3.8,
       semester_gpa: 3.75,
       cgpa: 3.78,
-      semester: 3,
+      semester: 'Year 2',
       department: 'Engineering',
-      parental_education: 'Degree',
+      parental_education: 'Bachelor',
       failures: 0,
     },
     result: {
@@ -88,11 +84,9 @@ const INITIAL_PREDICTIONS: PredictionRecord[] = [
     },
   },
   {
-    id: 'rec-3',
-    studentId: 'ST-2024-003',
+    id: 'REC-0003',
     timestamp: new Date(Date.now() - 1000 * 60 * 240).toISOString(),
     input: {
-      student_id: 'ST-2024-003',
       age: 22,
       gender: 'Male',
       family_income: 60000,
@@ -107,9 +101,9 @@ const INITIAL_PREDICTIONS: PredictionRecord[] = [
       gpa: 2.7,
       semester_gpa: 2.6,
       cgpa: 2.65,
-      semester: 5,
+      semester: 'Year 4',
       department: 'Business',
-      parental_education: 'Diploma',
+      parental_education: 'Master',
       failures: 1,
     },
     result: {
@@ -146,8 +140,7 @@ export function getStoredPredictions(): PredictionRecord[] {
 export function savePredictionRecord(input: StudentInputData, result: PredictionResponse): PredictionRecord {
   const current = getStoredPredictions();
   const newRecord: PredictionRecord = {
-    id: 'rec-' + Date.now(),
-    studentId: input.student_id || `ST-${new Date().getFullYear()}-${String(current.length + 1).padStart(3, '0')}`,
+    id: 'REC-' + String(Date.now()).slice(-6),
     timestamp: new Date().toISOString(),
     input,
     result,

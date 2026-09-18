@@ -3,7 +3,6 @@ from typing import List, Optional
 from pydantic import BaseModel, Field
 
 class StudentPredictionInput(BaseModel):
-    student_id: Optional[str] = Field(None, description="Student Identifier")
     department: str = Field(default="Computing & IT", description="Department / Faculty")
     semester: str = Field(default="Year 2", description="Current Semester")
 
@@ -30,12 +29,63 @@ class StudentPredictionInput(BaseModel):
 
 
 class PredictionResponse(BaseModel):
-    prediction: str
-    probability: float
-    riskLevel: str
-    keyRiskFactors: List[str] = Field(default_factory=list)
-    recommendations: List[str] = Field(default_factory=list)
-    message: str
+    id: Optional[int] = Field(default=None, description="Auto-incremented ID of the record")
+    prediction: str = Field(
+        ...,
+        description="Predicted outcome: 'Dropout' or 'Graduate / Retained'",
+    )
+    probability: float = Field(
+        ...,
+        ge=0.0,
+        le=1.0,
+        description="Dropout probability as a value between 0 and 1",
+    )
+    riskLevel: str = Field(
+        ...,
+        description="Categorised risk level: 'Low', 'Medium', or 'High'",
+    )
+    keyRiskFactors: list[str] = Field(
+        default_factory=list,
+        description=(
+            "Dynamically extracted list of student metrics that contributed to risk "
+            "(e.g. 'Low GPA (1.80)', 'Poor Attendance (55.0%)')."
+        ),
+    )
+    recommendations: list[str] = Field(
+        default_factory=list,
+        description=(
+            "Tailored, actionable intervention steps for academic advisors "
+            "based on the detected risk factors."
+        ),
+    )
+    message: str = Field(..., description="Human-readable summary of the prediction")
+
+    model_config = {
+        "json_schema_extra": {
+            "example": {
+                "id": 1,
+                "prediction": "Dropout",
+                "probability": 0.82,
+                "riskLevel": "High",
+                "keyRiskFactors": [
+                    "Low GPA (1.80)",
+                    "Poor Attendance (55.0%)",
+                    "2 Previous Academic Failures",
+                    "High Financial Stress (Level 4/5)",
+                ],
+                "recommendations": [
+                    "Schedule urgent academic counselling session within 48 hours.",
+                    "Refer student to the financial aid office to explore bursaries or payment plans.",
+                    "Enrol student in an attendance-improvement programme and set weekly check-ins.",
+                    "Connect student with a peer-tutoring programme to address academic failures.",
+                ],
+                "message": (
+                    "This student is at high risk of dropping out. "
+                    "Immediate academic and financial counselling is recommended."
+                ),
+            }
+        }
+    }
 
 
 class StudentHistoryItem(BaseModel):
@@ -50,9 +100,22 @@ class StudentHistoryItem(BaseModel):
     failures: int
     family_income: float
     financial_stress: Optional[int] = 0
+
+    department: Optional[str] = "CS"
+    semester: Optional[str] = "Year 1"
+    assignment_delay_days: Optional[int] = 0
+    travel_time_minutes: Optional[float] = 30.0
+    stress_index: Optional[float] = 5.0
+    parental_education: Optional[str] = "Bachelor"
+    part_time_job: Optional[str] = "No"
+    scholarship: Optional[str] = "No"
+    internet_access: Optional[str] = "Yes"
+
     prediction: str
     probability: float
     risk_level: str
+    key_risk_factors: list[str] = Field(default_factory=list)
+    recommendations: list[str] = Field(default_factory=list)
     evaluated_at: datetime
 
     model_config = {"from_attributes": True}
