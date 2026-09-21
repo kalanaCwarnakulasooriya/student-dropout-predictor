@@ -17,12 +17,16 @@ from app.services.risk_engine import (
 
 logger = logging.getLogger(__name__)
 
-_THIS_DIR = pathlib.Path(__file__).resolve().parent
-_REPO_ROOT = _THIS_DIR.parents[2]
+_THIS_DIR = pathlib.Path(__file__).resolve().parent 
+_BACKEND_ROOT = _THIS_DIR.parents[1] 
+_REPO_ROOT = _THIS_DIR.parents[2]     
 
-_MODEL_PATH = _REPO_ROOT / "ml-model" / "artifacts" / "student_dropout_model.pkl"
+_MODEL_PATH = _BACKEND_ROOT / "student_dropout_model.pkl"
+
 if not _MODEL_PATH.exists():
     _MODEL_PATH = _REPO_ROOT / "ml-model" / "models" / "student_dropout_model.pkl"
+if not _MODEL_PATH.exists():
+    _MODEL_PATH = _REPO_ROOT / "ml-model" / "artifacts" / "student_dropout_model.pkl"
 
 _FEATURE_COLUMNS: list[str] = [
     "Age",
